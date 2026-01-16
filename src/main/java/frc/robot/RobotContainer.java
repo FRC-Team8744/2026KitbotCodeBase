@@ -36,7 +36,7 @@ public class RobotContainer {
 
   // // The robot's subsystems
   // private final CANDriveSubsystem driveSubsystem = new CANDriveSubsystem();
-  // private final CANFuelSubsystem fuelSubsystem = new CANFuelSubsystem();
+  private final CANFuelSubsystem fuelSubsystem = new CANFuelSubsystem();
 
   // // The driver's controller
   // private final CommandXboxController driverController = new CommandXboxController(
@@ -152,6 +152,17 @@ public class RobotContainer {
 
     m_driver.b()
     .whileTrue(Commands.runOnce(() -> m_robotDrive.isAutoYSpeed = false).alongWith(Commands.runOnce(() -> m_robotDrive.isAutoXSpeed = false).alongWith(Commands.runOnce(() -> m_robotDrive.isAutoRotate = RotationEnum.NONE))));
+
+    // While the left bumper on operator controller is held, intake Fuel
+    m_driver.leftBumper().whileTrue(new Intake(fuelSubsystem));
+    // While the right bumper on the operator controller is held, spin up for 1
+    // second, then launch fuel. When the button is released, stop.
+    m_driver.rightBumper().whileTrue(new LaunchSequence(fuelSubsystem));
+    // While the A button is held on the operator controller, eject fuel back out
+    // the intake
+    m_driver.a().whileTrue(new Eject(fuelSubsystem));
+
+    fuelSubsystem.setDefaultCommand(fuelSubsystem.run(() -> fuelSubsystem.stop()));
   }
 
   public Command getAutonomousCommand() {
