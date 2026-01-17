@@ -6,7 +6,7 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.isInAreaEnum;
+//import frc.robot.isInAreaEnum;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -67,7 +67,7 @@ public class PhotonVisionGS extends SubsystemBase {
     if (result.hasTargets()) {
       PhotonTrackedTarget localTarget;
       localTarget = result.getTargets().stream()
-        .filter(((t) -> t.getFiducialId() == isInAreaEnum.areaEnum.getAprilTag()))
+   //     .filter(((t) -> t.getFiducialId() == isInAreaEnum.areaEnum.getAprilTag()))
         .findAny()
         .orElseGet((() -> result.getBestTarget()));
 

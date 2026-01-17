@@ -16,7 +16,7 @@ import frc.robot.Constants;
 import frc.robot.DriveModifier;
 import frc.robot.RotationEnum;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.isInAreaEnum;
+//import frc.robot.isInAreaEnum;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class AlignToPoleX extends DriveModifier {
@@ -37,60 +37,60 @@ public class AlignToPoleX extends DriveModifier {
     m_driveCtrl.reset();
   }
 
-  public double execute(Pose2d estimatedPose2d) {
-    double[] translatedRobotPosition = calculateTransformation(new double[]{estimatedPose2d.getX(), estimatedPose2d.getY()}, isInAreaEnum.areaEnum.getAngle() * -1);
-
-    robotX = translatedRobotPosition[0];
-    double goalX;
-    if (Constants.scoringMode == "Coral") {
-      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
-        if (DriverStation.isAutonomous()) {
-          goalX = 3.1723; // 3.17
-        } else {
-          goalX = 3.1746;
-        }
-      }
-      else {
-        if (DriverStation.isAutonomous()) {
-          goalX = 11.7808;
-        } else {
-          goalX = 11.7762;
-        }
-      }
-    } else if (Constants.scoringMode == "Algae") {
-      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
-        goalX = 3.0746;
-      } else {
-        goalX = 11.8143;
-      }
-    } else {
-      goalX = 3;
-    }
-
-    // SmartDashboard.putNumber("Goal X", goalX);
-    SmartDashboard.putNumber("Robot X", robotX);
-
-    xOffset = goalX - robotX;
-
-    // if (Math.abs(xOffset) >= 3.0) {
-    //   xOffset = 0;
+  public double execute(){//(Pose2d estimatedPose2d) {
+ // double[] translatedRobotPosition = calculateTransformation(new double[]{estimatedPose2d.getX(), estimatedPose2d.getY()}, isInAreaEnum.areaEnum.getAngle() * -1);
+return 0;
+    // robotX = translatedRobotPosition[0];
+    // double goalX;
+    // if (Constants.scoringMode == "Coral") {
+    //   if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+    //     if (DriverStation.isAutonomous()) {
+    //       goalX = 3.1723; // 3.17
+    //     } else {
+    //       goalX = 3.1746;
+    //     }
+    //   }
+    //   else {
+    //     if (DriverStation.isAutonomous()) {
+    //       goalX = 11.7808;
+    //     } else {
+    //       goalX = 11.7762;
+    //     }
+    //   }
+    // } else if (Constants.scoringMode == "Algae") {
+    //   if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+    //     goalX = 3.0746;
+    //   } else {
+    //     goalX = 11.8143;
+    //   }
+    // } else {
+    //   goalX = 3;
     // }
 
-    // SmartDashboard.putNumber("X Offset", xOffset);
-    // SmartDashboard.putNumber("Goal X", goalX);
+    // // SmartDashboard.putNumber("Goal X", goalX);
+    // SmartDashboard.putNumber("Robot X", robotX);
 
-    m_driveCtrl.setSetpoint(xOffset);
+    // xOffset = goalX - robotX;
 
-    m_output = MathUtil.clamp(m_driveCtrl.calculate(0), -1.0, 1.0);
+    // // if (Math.abs(xOffset) >= 3.0) {
+    // //   xOffset = 0;
+    // // }
 
-    if (Math.abs(m_driveCtrl.getError()) <= m_driveCtrl.getErrorTolerance()) {
-      // Constants.hasReachedX = true;
-      return 0;
-    }
-    else {
-      // Constants.hasReachedX = false;
-      return m_output * SwerveConstants.kMaxSpeedTeleop;
-    }
+    // // SmartDashboard.putNumber("X Offset", xOffset);
+    // // SmartDashboard.putNumber("Goal X", goalX);
+
+    // m_driveCtrl.setSetpoint(xOffset);
+
+    // m_output = MathUtil.clamp(m_driveCtrl.calculate(0), -1.0, 1.0);
+
+    // if (Math.abs(m_driveCtrl.getError()) <= m_driveCtrl.getErrorTolerance()) {
+    //   // Constants.hasReachedX = true;
+    //   return 0;
+    // }
+    // else {
+    //   // Constants.hasReachedX = false;
+    //   return m_output * SwerveConstants.kMaxSpeedTeleop;
+    // }
   }
 
   public double[] calculateTransformation(double[] positionToRotate, double angle) {
@@ -123,6 +123,6 @@ public class AlignToPoleX extends DriveModifier {
 
   @Override
   protected void doExecute(DriveSubsystem drive) {
-    Constants.autoXSpeed = execute(drive.getEstimatedPose());
+    Constants.autoXSpeed = execute();//drive.getEstimatedPose());
   }
 }

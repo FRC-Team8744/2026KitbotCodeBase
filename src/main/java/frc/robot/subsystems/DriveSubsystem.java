@@ -48,9 +48,9 @@ import frc.robot.Constants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.DriveModifier;
-import frc.robot.subsystems.alignment.AlignToPoleX;
-import frc.robot.subsystems.vision.Limelight4Test;
-import frc.robot.subsystems.vision.PhotonVisionGS;
+// import frc.robot.subsystems.alignment.AlignToPoleX;
+// import frc.robot.subsystems.vision.Limelight4Test;
+// import frc.robot.subsystems.vision.PhotonVisionGS;
 import frc.robot.RotationEnum;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -99,8 +99,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   // The imu sensor
   public final Pigeon2 m_imu = new Pigeon2(Constants.SwerveConstants.kIMU_ID);
-  private final PhotonVisionGS m_vision;
-  public final AlignToPoleX m_alignToPoleX;
+  // private final PhotonVisionGS m_vision;
+  // public final AlignToPoleX m_alignToPoleX;
 
   public RotationEnum isAutoRotate = RotationEnum.NONE;
   public boolean isAutoYSpeed = false;
@@ -130,11 +130,11 @@ public class DriveSubsystem extends SubsystemBase {
   public Field2d m_field;
   
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystem(PhotonVisionGS m_vision, AlignToPoleX m_alignToPoleX, Limelight4Test m_limelight, DriveModifier...driveModifiers) {
-    
+  public DriveSubsystem()//PhotonVisionGS m_vision, AlignToPoleX m_alignToPoleX, Limelight4Test m_limelight, DriveModifier...driveModifiers) 
+  {    
     m_turnCtrl.setTolerance(10.00);
-    this.m_vision = m_vision;
-    this.m_alignToPoleX = m_alignToPoleX;
+    //this.m_vision = m_vision;
+   // this.m_alignToPoleX = m_alignToPoleX;
     
     offset_FL = SwerveConstants.kFrontLeftMagEncoderOffsetDegrees;
     offset_RL = SwerveConstants.kRearLeftMagEncoderOffsetDegrees;
@@ -238,15 +238,15 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
-    if (m_vision.getTarget().isPresent()) {
-      if (m_vision.singleTag) {
-        if (m_vision.getTarget().map((t) -> t.getPoseAmbiguity()).orElse(1.0) <= .2) {
-          m_poseEstimator.addVisionMeasurement(m_vision.getRobotPose().get(), m_vision.getApriltagTime());
-        }
-      } else {
-        m_vision.getRobotPose().ifPresent((robotPose) -> m_poseEstimator.addVisionMeasurement(robotPose, m_vision.getApriltagTime()));
-      }
-    }
+    // if (m_vision.getTarget().isPresent()) {
+    //   if (m_vision.singleTag) {
+    //     if (m_vision.getTarget().map((t) -> t.getPoseAmbiguity()).orElse(1.0) <= .2) {
+    //       m_poseEstimator.addVisionMeasurement(m_vision.getRobotPose().get(), m_vision.getApriltagTime());
+    //     }
+    //   } else {
+    //     m_vision.getRobotPose().ifPresent((robotPose) -> m_poseEstimator.addVisionMeasurement(robotPose, m_vision.getApriltagTime()));
+    //   }
+    // }
 
     m_poseEstimator.update(m_imu.getRotation2d(), getModulePositions());
 
@@ -301,9 +301,9 @@ public class DriveSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("RR Mag Enc", m_rearRight.getCanCoder());
 
       SmartDashboard.putNumber("FL Angle State", m_frontLeft.getState().angle.getDegrees());
-      SmartDashboard.putNumber("FL Angle SparkMax", m_frontLeft.getAngle().getDegrees());
+      SmartDashboard.putNumber("FL Angle SparkMax", m_frontLeft.getAngle());
       SmartDashboard.putNumber("FL Angle CanCoder", m_frontLeft.getCanCoder());
-      SmartDashboard.putNumber("FL Angle Offset", m_frontLeft.getCanCoder() - m_frontLeft.getAngle().getDegrees());
+      SmartDashboard.putNumber("FL Angle Offset", m_frontLeft.getCanCoder() - m_frontLeft.getAngle());
       SmartDashboard.putNumber("FL Angle Current",m_frontLeft.getTurnCurrent());
       
       SmartDashboard.putNumber("FL Turn Enc", m_frontLeft.getPosition().angle.getDegrees());
@@ -410,7 +410,7 @@ public class DriveSubsystem extends SubsystemBase {
     // }
 
     SmartDashboard.putBoolean("Is Driving Slow", isDrivingSlow);
-    SmartDashboard.putNumber("FL Desired Position", m_frontLeft.getDesiredPosition());
+   // SmartDashboard.putNumber("FL Desired Position", m_frontLeft.getDesiredPosition());
 
     // Apply joystick deadband
     xSpeed = isAutoXSpeed ? xSpeed : MathUtil.applyDeadband(xSpeed, OIConstants.kDeadband, 1.0);

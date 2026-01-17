@@ -106,14 +106,14 @@ public class RobotContainer {
 
 
   // The robot's subsystems
-  private PhotonVisionGS m_vision = new PhotonVisionGS();
-  private AlignToPoleX m_alignToPoleX = new AlignToPoleX();
-  private Limelight4Test m_limelight4Test = new Limelight4Test();
-  private DriveSubsystem m_robotDrive = new DriveSubsystem(m_vision, m_alignToPoleX, m_limelight4Test, m_alignToPoleX);
+   private PhotonVisionGS m_vision = new PhotonVisionGS();
+   private AlignToPoleX m_alignToPoleX = new AlignToPoleX();
+   private Limelight4Test m_limelight4Test = new Limelight4Test();
+   private DriveSubsystem m_robotDrive = new DriveSubsystem();//m_vision, m_alignToPoleX, m_limelight4Test, m_alignToPoleX);
   // The driver's controller
   private CommandXboxController m_driver = new CommandXboxController(OIConstants.kDriverControllerPort);
   // private CommandXboxController m_coDriver = new CommandXboxController(1);
-  private AutoCommandManager m_autoManager = new AutoCommandManager(m_vision, m_robotDrive);
+  private AutoCommandManager m_autoManager = new AutoCommandManager( m_robotDrive);
   
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
