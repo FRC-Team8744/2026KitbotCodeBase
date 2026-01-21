@@ -21,20 +21,15 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static final class DriveConstants {
     // Motor controller IDs for drivetrain motors
-    public static final int LEFT_LEADER_ID = 1;
-    public static final int LEFT_FOLLOWER_ID = 2;
-    public static final int RIGHT_LEADER_ID = 3;
-    public static final int RIGHT_FOLLOWER_ID = 4;
 
-    // Current limit for drivetrain motors. 60A is a reasonable maximum to reduce
-    // likelihood of tripping breakers or damaging CIM motors
-    public static final int DRIVE_MOTOR_CURRENT_LIMIT = 60;
+    // Current limit for drivetrain motors.
+    public static final int DRIVE_MOTOR_CURRENT_LIMIT = 40;
   }
 
   public static final class FuelConstants {
     // Motor controller IDs for Fuel Mechanism motors
-    public static final int FEEDER_MOTOR_ID = 6;
-    public static final int INTAKE_LAUNCHER_MOTOR_ID = 5;
+    public static final int FEEDER_MOTOR_ID = 13;
+    public static final int INTAKE_LAUNCHER_MOTOR_ID = 14;
 
     // Current limit and nominal voltage for fuel mechanism motors.
     public static final int FEEDER_MOTOR_CURRENT_LIMIT = 60;
@@ -132,20 +127,20 @@ public final class Constants {
     // The positive X axis points ahead, the positive Y axis points left, and the positive Z axis points up.
     // We use NWU here because the rest of the library, and math in general, use NWU axes convention.
     // https://docs.wpilib.org/en/stable/docs/software/hardware-apis/motors/wpi-drive-classes.html#axis-conventions
-    public static final int kFrontLeftDriveMotorPort = 1; // 8
+    public static final int kFrontLeftDriveMotorPort = 7; // 8
     public static final int kFrontRightDriveMotorPort = 4; // 3
     public static final int kRearLeftDriveMotorPort = 10; // 17
-    public static final int kRearRightDriveMotorPort = 7; // 20
+    public static final int kRearRightDriveMotorPort = 1; // 20
 
-    public static final int kFrontLeftTurningMotorPort = 2; // 10
+    public static final int kFrontLeftTurningMotorPort = 8; // 10
     public static final int kFrontRightTurningMotorPort = 5; // 5
     public static final int kRearLeftTurningMotorPort = 11; // 19
-    public static final int kRearRightTurningMotorPort = 8; // 22
+    public static final int kRearRightTurningMotorPort = 2; // 22
 
-    public static final int kFrontLeftMagEncoderPort = 3; // 9
+    public static final int kFrontLeftMagEncoderPort = 9; // 9
     public static final int kFrontRightMagEncoderPort = 6; // 4
     public static final int kRearLeftMagEncoderPort = 12; // 18
-    public static final int kRearRightMagEncoderPort = 9; // 21
+    public static final int kRearRightMagEncoderPort = 3; // 21
 
     public static final int kAlgaeMechanism = 19;
 
@@ -172,7 +167,7 @@ public final class Constants {
             new Translation2d(-kWheelBase / 2, kTrackWidth / 2),  // Rear Left Quadrant
             new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));  // Rear Right Quadrant
 
-    public static final int kIMU_ID = 13;
+    public static final int kIMU_ID = 15;
 
     public static int kSwerveFL_enum = 0;
     public static int kSwerveFR_enum = 1;
@@ -181,14 +176,14 @@ public final class Constants {
   }
 
   public static final class ConstantsOffboard {
-    public static final int kMaximumSparkMaxRPM = 6000;
+    public static final int kMaximumSparkMaxRPM = 5700;
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(4);
     public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
 
-    public static final double DRIVE_GEAR_RATIO = 5.27 / 1.0; // 6.03:1
+    public static final double DRIVE_GEAR_RATIO = 6.75 / 1.0; // 6.75:1
     public static final double DRIVE_ROTATIONS_TO_METERS = WHEEL_CIRCUMFERENCE / DRIVE_GEAR_RATIO;
     public static final double DRIVE_RPM_TO_METERS_PER_SECOND = DRIVE_ROTATIONS_TO_METERS / 60.0;
-    public static final double ANGLE_GEAR_RATIO = (287 / 11) / 1.0; // ~26.09:1
+    public static final double ANGLE_GEAR_RATIO = (150 / 7) / 1.0; // (150/7):1
     public static final double ANGLE_ROTATIONS_TO_RADIANS = (Math.PI * 2) / ANGLE_GEAR_RATIO;
     public static final double ANGLE_RPM_TO_RADIANS_PER_SECOND = DRIVE_ROTATIONS_TO_METERS / 60.0;
 
