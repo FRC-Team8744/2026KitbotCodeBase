@@ -267,19 +267,25 @@ public class DriveSubsystem extends SubsystemBase {
     // SmartDashboard.putNumber("Gyro pitch", m_imu.getPitch().getValueAsDouble());
     // SmartDashboard.putNumber("Gyro roll", m_imu.getRoll().getValueAsDouble());
 
-    SmartDashboard.putNumber("Estimated Pose X", m_poseEstimator.getEstimatedPosition().getX());
-    SmartDashboard.putNumber("Estimated Pose Y", m_poseEstimator.getEstimatedPosition().getY());
+    // SmartDashboard.putNumber("Estimated Pose X", m_poseEstimator.getEstimatedPosition().getX());
+    // SmartDashboard.putNumber("Estimated Pose Y", m_poseEstimator.getEstimatedPosition().getY());
 
-    SmartDashboard.putNumber("Estimated Pose Rotation", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+    // SmartDashboard.putNumber("Estimated Pose Rotation", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
 
-    double[] poseArray = {getEstimatedPose().getX(), getEstimatedPose().getY(), getEstimatedPose().getRotation().getRadians()};
-    SmartDashboard.putNumberArray("Estimated Pose", poseArray);
+    // double[] poseArray = {getEstimatedPose().getX(), getEstimatedPose().getY(), getEstimatedPose().getRotation().getRadians()};
+    // SmartDashboard.putNumberArray("Estimated Pose", poseArray);
 
-    SmartDashboard.putBoolean("yCheck", Constants.yCheck);
+    // SmartDashboard.putBoolean("yCheck", Constants.yCheck);
 
-    SmartDashboard.putNumber("FL current Angle", m_frontLeft.getCurrentDriveAngle());
+    SmartDashboard.putNumber("FL Angle", m_frontLeft.getWheelAngleDegrees());
+    SmartDashboard.putNumber("FR Angle", m_frontRight.getWheelAngleDegrees());
+    SmartDashboard.putNumber("RL Angle", m_rearLeft.getWheelAngleDegrees());
+    SmartDashboard.putNumber("RR Angle", m_rearRight.getWheelAngleDegrees());
 
-    // SmartDashboard.putNumber("Yep", m_frontLeft.getVelocity());
+    SmartDashboard.putNumber("FL Velocity", m_frontLeft.getVelocity());
+    SmartDashboard.putNumber("FR Velocity", m_frontRight.getVelocity());
+    SmartDashboard.putNumber("RL Velocity", m_rearLeft.getVelocity());
+    SmartDashboard.putNumber("RR Velocity", m_rearRight.getVelocity());
 
     pose_publisher.set(getPose());
     swerve_publisher.set(new SwerveModuleState[] {

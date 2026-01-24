@@ -30,16 +30,19 @@ public final class Constants {
     // Motor controller IDs for Fuel Mechanism motors
     public static final int FEEDER_MOTOR_ID = 13;
     public static final int INTAKE_LAUNCHER_MOTOR_ID = 14;
+    public static final int INTAKE_ID = 16;
 
     // Current limit and nominal voltage for fuel mechanism motors.
-    public static final int FEEDER_MOTOR_CURRENT_LIMIT = 60;
-    public static final int LAUNCHER_MOTOR_CURRENT_LIMIT = 60;
+    public static final int FEEDER_MOTOR_CURRENT_LIMIT = 40;
+    public static final int LAUNCHER_MOTOR_CURRENT_LIMIT = 40;
+    public static final int INTAKE_MOTOR_CURRENT_LIMIT = 40;
 
     // Voltage values for various fuel operations. These values may need to be tuned
     // based on exact robot construction.
     // See the Software Guide for tuning information
     public static final double INTAKING_FEEDER_VOLTAGE = -12;
     public static final double INTAKING_INTAKE_VOLTAGE = 10;
+    public static final double FLOOR_INTAKE_VOLTAGE = 10;
     public static final double LAUNCHING_FEEDER_VOLTAGE = 9;
     public static final double LAUNCHING_LAUNCHER_VOLTAGE = 10.6;
     public static final double SPIN_UP_FEEDER_VOLTAGE = -6;
@@ -148,10 +151,10 @@ public final class Constants {
     public static final boolean DISABLE_ANGLE_OPTIMIZER = false;
 
     // Note: Zeroing the CanCoder in Tuner X doesn't seem to affect the reported absolute position.
-    public static final double kFrontLeftMagEncoderOffsetDegrees = 1 - 0.125244; // 3
-    public static final double kFrontRightMagEncoderOffsetDegrees = 1 - 0.846191; // 6
-    public static final double kRearLeftMagEncoderOffsetDegrees = 1 - 0.224121; // 12
-    public static final double kRearRightMagEncoderOffsetDegrees = 1 - 0.248779; // 9
+    public static final double kFrontLeftMagEncoderOffsetDegrees = 0; //1 - 0.125244; // 3
+    public static final double kFrontRightMagEncoderOffsetDegrees = 0; //1 - 0.846191; // 6
+    public static final double kRearLeftMagEncoderOffsetDegrees = 0; //1 - 0.224121; // 12
+    public static final double kRearRightMagEncoderOffsetDegrees = 0; //1 - 0.248779; // 9
 
     // Distance between centers of right and left wheels on robot
     public static final double kTrackWidth = Units.inchesToMeters(20.472);

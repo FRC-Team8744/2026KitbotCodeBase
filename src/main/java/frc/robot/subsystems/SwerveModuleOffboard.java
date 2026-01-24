@@ -93,18 +93,18 @@ public class SwerveModuleOffboard {
         .velocityConversionFactor(ConstantsOffboard.DRIVE_RPM_TO_METERS_PER_SECOND);
     driveConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        // Set PID values for velocity control in slot 1
-        .p(0.0001, ClosedLoopSlot.kSlot1)
-        .i(0, ClosedLoopSlot.kSlot1)
-        .d(0, ClosedLoopSlot.kSlot1)
-        .outputRange(-1, 1, ClosedLoopSlot.kSlot1)
+        // Set PID values for velocity control in slot 3
+        .p(0.0001, ClosedLoopSlot.kSlot3)
+        .i(0, ClosedLoopSlot.kSlot3)
+        .d(0, ClosedLoopSlot.kSlot3)
+        .outputRange(-1, 1, ClosedLoopSlot.kSlot3)
         .feedForward
           // kV is now in Volts, so we multiply by the nominal voltage (12V)
-          .kV(12.0 / 5767, ClosedLoopSlot.kSlot1);
+          .kV(12.0 / 5767, ClosedLoopSlot.kSlot3);
     driveConfig.closedLoop.maxMotion
-        .maxAcceleration(500, ClosedLoopSlot.kSlot1)
-        .cruiseVelocity(6000, ClosedLoopSlot.kSlot1)
-        .allowedProfileError(1, ClosedLoopSlot.kSlot1);
+        .maxAcceleration(500, ClosedLoopSlot.kSlot3)
+        .cruiseVelocity(6000, ClosedLoopSlot.kSlot3)
+        .allowedProfileError(1, ClosedLoopSlot.kSlot3);
 
     m_driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
@@ -115,19 +115,19 @@ public class SwerveModuleOffboard {
         .positionConversionFactor(ConstantsOffboard.ANGLE_RPM_TO_RADIANS_PER_SECOND)
         .velocityConversionFactor(1);
     turningConfig.closedLoop
-        // Set PID values for position control in slot 1
+        // Set PID values for position control in slot 2
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .p(0.1, ClosedLoopSlot.kSlot1)
-        .i(0, ClosedLoopSlot.kSlot1)
-        .d(0, ClosedLoopSlot.kSlot1)
-        .outputRange(-1, 1, ClosedLoopSlot.kSlot1);
+        .p(0.1, ClosedLoopSlot.kSlot2)
+        .i(0, ClosedLoopSlot.kSlot2)
+        .d(0, ClosedLoopSlot.kSlot2)
+        .outputRange(-1, 1, ClosedLoopSlot.kSlot2);
         // .feedForward
         //   // kV is now in Volts, so we multiply by the nominal voltage (12V)
         //   .kV(12.0 / 5767, ClosedLoopSlot.kSlot1);
     turningConfig.closedLoop.maxMotion
-        .cruiseVelocity(1000, ClosedLoopSlot.kSlot1)
-        .maxAcceleration(1000, ClosedLoopSlot.kSlot1)
-        .allowedProfileError(1, ClosedLoopSlot.kSlot1);
+        .cruiseVelocity(1000, ClosedLoopSlot.kSlot2)
+        .maxAcceleration(1000, ClosedLoopSlot.kSlot2)
+        .allowedProfileError(1, ClosedLoopSlot.kSlot2);
 
     m_turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
@@ -173,11 +173,11 @@ public class SwerveModuleOffboard {
     // driveVelocity.Velocity = (state.speedMetersPerSecond * 60) / Constants.ConstantsOffboard.WHEEL_CIRCUMFERENCE;
     // driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
     // m_driveMotor.setControl(driveVelocity);
-    m_drivePID.setSetpoint(state.speedMetersPerSecond, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
+    m_drivePID.setSetpoint(state.speedMetersPerSecond, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot3);
     // turnPosition.Position = (state.angle.getRotations());
     // m_turningMotor.setControl(turnPosition.withEnableFOC(false).withPosition(turnPosition.Position));
     // m_turningPID.setReference(state.angle.getRadians(), (ConstantsOffboard.ANGLE_MOTOR_PROFILED_MODE) ? SparkMax.ControlType.kMAXMotionPositionControl : SparkMax.ControlType.kPosition);
-    m_turningPID.setSetpoint(state.angle.getRadians(), ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot1);
+    m_turningPID.setSetpoint(state.angle.getRadians(), ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot2);
   }
 
   /** Zeroes all the SwerveModule encoders. */
@@ -266,8 +266,8 @@ public class SwerveModuleOffboard {
     return m_turningMotor.getOutputCurrent();
   }
 
-  public double getCurrentDriveAngle() {
-    return (m_canCoder.getAbsolutePosition().getValueAsDouble());
+  public double getWheelAngleDegrees() {
+    return (m_canCoder.getAbsolutePosition().getValueAsDouble() * 360.0);
   }
 
   private void configureDevices() {
@@ -288,8 +288,8 @@ public class SwerveModuleOffboard {
     var posVal = m_canCoder.getAbsolutePosition().waitForUpdate(0.1); // This actaully waits that long! Don't call after init!
     if(posVal.getStatus().isOK()) {
         /* Perform seeding */
-        // double val = posVal.getValueAsDouble();
-        // m_turningEncoder.setPosition(Units.degreesToRadians(val * 360.0 - m_canCoderOffsetDegrees));
+        double val = posVal.getValueAsDouble();
+        m_turningEncoder.setPosition(Units.degreesToRadians(val * 360.0 - m_canCoderOffsetDegrees));
         // m_turningEncoder.setPosition(Units.degreesToRadians(val * 360.0));
     } else {
         /* Report error and retry later */
