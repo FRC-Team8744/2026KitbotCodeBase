@@ -151,10 +151,10 @@ public final class Constants {
     public static final boolean DISABLE_ANGLE_OPTIMIZER = false;
 
     // Note: Zeroing the CanCoder in Tuner X doesn't seem to affect the reported absolute position.
-    public static final double kFrontLeftMagEncoderOffsetDegrees = 0; //1 - 0.125244; // 3
-    public static final double kFrontRightMagEncoderOffsetDegrees = 0; //1 - 0.846191; // 6
-    public static final double kRearLeftMagEncoderOffsetDegrees = 0; //1 - 0.224121; // 12
-    public static final double kRearRightMagEncoderOffsetDegrees = 0; //1 - 0.248779; // 9
+    public static final double kFrontLeftMagEncoderOffsetDegrees = 85.6; //0.9169 * 360; //1 - 0.125244; // 3
+    public static final double kFrontRightMagEncoderOffsetDegrees = 42.5; //0.8769 * 360.0; //1 - 0.846191; // 6
+    public static final double kRearLeftMagEncoderOffsetDegrees = 351.3; //0.2329 *360.0; //1 - 0.224121; // 12
+    public static final double kRearRightMagEncoderOffsetDegrees = 352.0; //0.3671 * 360.0; //1 - 0.248779; // 9
 
     // Distance between centers of right and left wheels on robot
     public static final double kTrackWidth = Units.inchesToMeters(20.472);
@@ -241,7 +241,7 @@ public final class Constants {
     public static final double MAX_ANGULAR_DEGREES_PER_SECOND = Math.toDegrees(MAX_ANGULAR_RADIANS_PER_SECOND);
 
     /** Inversions. */
-    public static final boolean DRIVE_MOTOR_INVERSION = true;
+    public static final boolean DRIVE_MOTOR_INVERSION = false;
     public static final boolean ANGLE_MOTOR_INVERSION = true;
   }
 

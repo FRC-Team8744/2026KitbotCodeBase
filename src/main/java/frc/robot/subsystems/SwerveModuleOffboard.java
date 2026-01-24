@@ -18,12 +18,12 @@ import com.revrobotics.PersistMode;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+// import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Constants;
+// import frc.robot.Constants;
 import frc.robot.Constants.ConstantsOffboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
@@ -43,7 +43,7 @@ public class SwerveModuleOffboard {
   // private static final CANcoderConfiguration testCanCoderConfig = new CANcoderConfiguration();
   // private static final Slot0Configs rotationConfigPID = rotationConfig.Slot0;
 
-  private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(0.32, 1.51, 0.27);
+  // private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(0.32, 1.51, 0.27);
 
   // Turning motor
   private final SparkMax m_turningMotor;
@@ -55,7 +55,7 @@ public class SwerveModuleOffboard {
   // Swerve module absolute encoder (wheel angle)
   private final CANcoder m_canCoder;
   private final double m_canCoderOffsetDegrees;
-  private double lastAngle;
+  // private double lastAngle;
 
   SwerveModuleState state;
   private int DisplayCount = 0;
@@ -87,9 +87,10 @@ public class SwerveModuleOffboard {
 
     driveConfig
         .smartCurrentLimit(DriveConstants.DRIVE_MOTOR_CURRENT_LIMIT)
+        .inverted(ConstantsOffboard.DRIVE_MOTOR_INVERSION)
         .idleMode(IdleMode.kBrake);
     driveConfig.encoder
-        .positionConversionFactor(1)
+        .positionConversionFactor(ConstantsOffboard.DRIVE_ROTATIONS_TO_METERS)
         .velocityConversionFactor(ConstantsOffboard.DRIVE_RPM_TO_METERS_PER_SECOND);
     driveConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -107,14 +108,19 @@ public class SwerveModuleOffboard {
         .allowedProfileError(1, ClosedLoopSlot.kSlot3);
 
     m_driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    m_driveEncoder.setPosition(0);
 
     turningConfig
         .smartCurrentLimit(DriveConstants.DRIVE_MOTOR_CURRENT_LIMIT)
+        .inverted(ConstantsOffboard.ANGLE_MOTOR_INVERSION)
         .idleMode(IdleMode.kBrake);
     turningConfig.encoder
-        .positionConversionFactor(ConstantsOffboard.ANGLE_RPM_TO_RADIANS_PER_SECOND)
+        .positionConversionFactor(ConstantsOffboard.ANGLE_ROTATIONS_TO_RADIANS)
         .velocityConversionFactor(1);
     turningConfig.closedLoop
+        .positionWrappingEnabled(true)
+        .positionWrappingMaxInput(2 * Math.PI)
+        .positionWrappingMinInput(0)
         // Set PID values for position control in slot 2
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .p(0.1, ClosedLoopSlot.kSlot2)
@@ -131,12 +137,11 @@ public class SwerveModuleOffboard {
 
     m_turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
-    configureDevices();
+    // lastAngle = getState().angle.getRadians();
 
-    lastAngle = getState().angle.getRadians();
-
-    m_driveEncoder.setPosition(0);
     m_turningEncoder.setPosition(0);
+
+    configureDevices();
   }
 
   /**
@@ -154,14 +159,7 @@ public class SwerveModuleOffboard {
       }
     } else {
       // Optimize the reference state to avoid spinning further than 90 degrees
-      // state = SwerveModuleState.optimize(desiredState, new Rotation2d(m_turningEncoder.getPosition()));
-      // m_turningEncoder.setPosition(Units.degreesToRadians(m_canCoder.getAbsolutePosition().getValueAsDouble() * 360.0 - m_canCoderOffsetDegrees));
-      // m_turningEncoder.setPosition(Units.rotationsToRadians(m_turningEncoder.getPosition().getValueAsDouble()));
-      // state.optimize(new Rotation2d(m_turningEncoder.getPosition()));
-      // state.angle = Rotation2d.fromDegrees(wrapTo360(state.angle.getDegrees()));
-      // state.angle = Rotation2d.fromDegrees(MathUtil.inputModulus(state.angle.getDegrees(), 0, 360.0));
-      // optimize(state.angle.getDegrees(), Rotation2d.fromRotations(m_canCoder.getAbsolutePosition().getValueAsDouble()).getDegrees());
-      state.optimize(Rotation2d.fromRotations(m_canCoder.getAbsolutePosition().getValueAsDouble()));
+      state.optimize(new Rotation2d(m_turningEncoder.getPosition()));
     }
 
     // Scale speed by cosine of angle error. This scales down movement perpendicular to the desired
@@ -170,20 +168,8 @@ public class SwerveModuleOffboard {
     state.speedMetersPerSecond *= state.angle.minus(Rotation2d.fromRotations(m_turningEncoder.getPosition())).getCos();
 
     // Set the PID reference states
-    // driveVelocity.Velocity = (state.speedMetersPerSecond * 60) / Constants.ConstantsOffboard.WHEEL_CIRCUMFERENCE;
-    // driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
-    // m_driveMotor.setControl(driveVelocity);
     m_drivePID.setSetpoint(state.speedMetersPerSecond, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot3);
-    // turnPosition.Position = (state.angle.getRotations());
-    // m_turningMotor.setControl(turnPosition.withEnableFOC(false).withPosition(turnPosition.Position));
-    // m_turningPID.setReference(state.angle.getRadians(), (ConstantsOffboard.ANGLE_MOTOR_PROFILED_MODE) ? SparkMax.ControlType.kMAXMotionPositionControl : SparkMax.ControlType.kPosition);
     m_turningPID.setSetpoint(state.angle.getRadians(), ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot2);
-  }
-
-  /** Zeroes all the SwerveModule encoders. */
-  public void resetEncoder() {
-    m_driveEncoder.setPosition(0.0);
-    m_turningEncoder.setPosition(0.0);
   }
 
   public SwerveModuleState getState() {
@@ -192,37 +178,10 @@ public class SwerveModuleOffboard {
     return new SwerveModuleState(velocity, rot);
   }
 
-  public static double wrapTo360(double angleDeg) {
-    angleDeg %= 360.0;
-    if (angleDeg < 0) {
-        angleDeg += 360.0;
-    }
-    return angleDeg;
-  }
-
-  public void optimize(double goalAngle, double currentAngle) {
-    double x = goalAngle - currentAngle;
-    double y = (goalAngle + 360) - currentAngle;
-    double z = goalAngle - (currentAngle + 360);
-    if (Math.abs(x) > 90.0 && Math.abs(y) > 90.0 && Math.abs(z) > 90.0) {
-      state.speedMetersPerSecond *= -1;
-      state.angle = Rotation2d.fromDegrees(goalAngle).rotateBy(Rotation2d.kPi);
-      // Constants.yCheck = true;
-    } 
-    else if (Math.abs(x) > 90.0 && Math.abs(y) <= 90.0) {
-      state.angle = Rotation2d.fromDegrees((goalAngle + 360));
-      Constants.yCheck = true;
-    }
-    else if (Math.abs(x) > 90.0 && Math.abs(z) <= 90.0) {
-      state.angle = Rotation2d.fromDegrees((goalAngle - 360));
-      Constants.yCheck = true;
-    }
-  }
-
   /**
    * Returns the CANcoder's measured turn angle in degrees.
    */
-  public double getCanCoder() {
+  public double getAbsAngleDegrees() {
     var posVal = m_canCoder.getPosition();
     if(posVal.getStatus().isOK()) {
         double val = posVal.getValueAsDouble();
@@ -254,10 +213,6 @@ public class SwerveModuleOffboard {
     return m_driveEncoder.getVelocity();
   }
 
-  // public double getDesiredPosition() {
-  //   return turnPosition.Position;
-  // }
-  
   public double getCurrent() {
     return m_driveMotor.getOutputCurrent();
   }
@@ -266,9 +221,21 @@ public class SwerveModuleOffboard {
     return m_turningMotor.getOutputCurrent();
   }
 
+  // public double getAbsAngleDegrees() {
+  //   return (m_canCoder.getAbsolutePosition().getValueAsDouble() * 360.0);
+  //   // return (Units.radiansToDegrees(m_turningEncoder.getPosition()));
+  // }
+
   public double getWheelAngleDegrees() {
-    return (m_canCoder.getAbsolutePosition().getValueAsDouble() * 360.0);
+    // return (m_canCoder.getAbsolutePosition().getValueAsDouble() * 360.0);
+    return (Units.radiansToDegrees(m_turningEncoder.getPosition()));
   }
+
+
+  public double getWheelPosition() {
+    return m_driveEncoder.getPosition();
+  }
+
 
   private void configureDevices() {
     /* Configure CANcoder */
@@ -289,20 +256,11 @@ public class SwerveModuleOffboard {
     if(posVal.getStatus().isOK()) {
         /* Perform seeding */
         double val = posVal.getValueAsDouble();
-        m_turningEncoder.setPosition(Units.degreesToRadians(val * 360.0 - m_canCoderOffsetDegrees));
-        // m_turningEncoder.setPosition(Units.degreesToRadians(val * 360.0));
+        // m_turningEncoder.setPosition(Units.degreesToRadians(val * 360.0 - m_canCoderOffsetDegrees));
+        m_turningEncoder.setPosition(Units.degreesToRadians(val * 360.0));
     } else {
         /* Report error and retry later */
         System.out.println("Error reading CANcoder position! Robot will not drive straight!");
     }
-
-    // Math check! Is reading the SparkMax position good enough?
-    // CANcoder resolution in degrees: 360/4096 = 0.088 degrees
-    // SparkMax encoder resolution: 360 / ( 48 positions * ANGLE_GEAR_RATIO (150/7) ) = 0.35 degrees
-    // So is the CANcoder slightly better? Yes, but the CANcoder hardware spec:
-    // https://store.ctr-electronics.com/content/user-manual/CANCoder%20User's%20Guide.pdf
-    // says that the absolute position can be off by 1.44 degrees if there is rotation!
-    // It may be possible to servo to m_canCoder.getPosition(), but then then CAN bus utilization will go way up.
-    // Future project: Servo on the CANcoder position and see if CAN bus utilization is a problem.
   }
 }

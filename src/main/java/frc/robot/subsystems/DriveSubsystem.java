@@ -4,10 +4,10 @@
 
 package frc.robot.subsystems;
 
-import java.util.Arrays;
+// import java.util.Arrays;
 import java.util.Vector;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
+// import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -16,25 +16,25 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.Nat;
+// import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.estimator.ExtendedKalmanFilter;
-import edu.wpi.first.math.estimator.KalmanFilter;
+// import edu.wpi.first.math.estimator.ExtendedKalmanFilter;
+// import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
+// import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.math.system.LinearSystem;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
+// import edu.wpi.first.math.numbers.N2;
+// import edu.wpi.first.math.system.LinearSystem;
+// import edu.wpi.first.math.system.plant.DCMotor;
+// import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
@@ -79,9 +79,9 @@ public class DriveSubsystem extends SubsystemBase {
 
   public boolean leftPoint = true;
 
-  private double goalAngle = 0;
+  // private double goalAngle = 0;
   private PIDController m_turnCtrl = new PIDController(0.03, 0.0065, 0.0035);
-  private boolean roboNoSpino = true;
+  // private boolean roboNoSpino = true;
   private Timer rotationTimer = new Timer();
 
   final Timer m_timerX = new Timer();
@@ -282,10 +282,20 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("RL Angle", m_rearLeft.getWheelAngleDegrees());
     SmartDashboard.putNumber("RR Angle", m_rearRight.getWheelAngleDegrees());
 
+    SmartDashboard.putNumber("FL Abs Angle", m_frontLeft.getAbsAngleDegrees());
+    SmartDashboard.putNumber("FR Abs Angle", m_frontRight.getAbsAngleDegrees());
+    SmartDashboard.putNumber("RL Abs Angle", m_rearLeft.getAbsAngleDegrees());
+    SmartDashboard.putNumber("RR Abs Angle", m_rearRight.getAbsAngleDegrees());
+
     SmartDashboard.putNumber("FL Velocity", m_frontLeft.getVelocity());
     SmartDashboard.putNumber("FR Velocity", m_frontRight.getVelocity());
     SmartDashboard.putNumber("RL Velocity", m_rearLeft.getVelocity());
     SmartDashboard.putNumber("RR Velocity", m_rearRight.getVelocity());
+
+    SmartDashboard.putNumber("FL Position", m_frontLeft.getWheelPosition());
+    SmartDashboard.putNumber("FR Position", m_frontRight.getWheelPosition());
+    SmartDashboard.putNumber("RL Position", m_rearLeft.getWheelPosition());
+    SmartDashboard.putNumber("RR Position", m_rearRight.getWheelPosition());
 
     pose_publisher.set(getPose());
     swerve_publisher.set(new SwerveModuleState[] {
@@ -298,25 +308,25 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Diagnostics
 
-  if (Constants.kDebugLevel >=3) {
-      SmartDashboard.putNumber("FL Mag Enc", m_frontLeft.getCanCoder());
-      SmartDashboard.putNumber("FR Mag Enc", m_frontRight.getCanCoder());
-      SmartDashboard.putNumber("RL Mag Enc", m_rearLeft.getCanCoder());
-      SmartDashboard.putNumber("RR Mag Enc", m_rearRight.getCanCoder());
+  // if (Constants.kDebugLevel >=3) {
+  //     SmartDashboard.putNumber("FL Mag Enc", m_frontLeft.getCanCoder());
+  //     SmartDashboard.putNumber("FR Mag Enc", m_frontRight.getCanCoder());
+  //     SmartDashboard.putNumber("RL Mag Enc", m_rearLeft.getCanCoder());
+  //     SmartDashboard.putNumber("RR Mag Enc", m_rearRight.getCanCoder());
 
-      SmartDashboard.putNumber("FL Angle State", m_frontLeft.getState().angle.getDegrees());
-      SmartDashboard.putNumber("FL Angle SparkMax", m_frontLeft.getAngle());
-      SmartDashboard.putNumber("FL Angle CanCoder", m_frontLeft.getCanCoder());
-      SmartDashboard.putNumber("FL Angle Offset", m_frontLeft.getCanCoder() - m_frontLeft.getAngle());
-      SmartDashboard.putNumber("FL Angle Current",m_frontLeft.getTurnCurrent());
+  //     SmartDashboard.putNumber("FL Angle State", m_frontLeft.getState().angle.getDegrees());
+  //     SmartDashboard.putNumber("FL Angle SparkMax", m_frontLeft.getAngle());
+  //     SmartDashboard.putNumber("FL Angle CanCoder", m_frontLeft.getCanCoder());
+  //     SmartDashboard.putNumber("FL Angle Offset", m_frontLeft.getCanCoder() - m_frontLeft.getAngle());
+  //     SmartDashboard.putNumber("FL Angle Current",m_frontLeft.getTurnCurrent());
       
-      SmartDashboard.putNumber("FL Turn Enc", m_frontLeft.getPosition().angle.getDegrees());
-      SmartDashboard.putNumber("FR Turn Enc", m_frontRight.getPosition().angle.getDegrees());
-      SmartDashboard.putNumber("RL Turn Enc", m_rearLeft.getPosition().angle.getDegrees());
-      SmartDashboard.putNumber("RR Turn Enc", m_rearRight.getPosition().angle.getDegrees());
+  //     SmartDashboard.putNumber("FL Turn Enc", m_frontLeft.getPosition().angle.getDegrees());
+  //     SmartDashboard.putNumber("FR Turn Enc", m_frontRight.getPosition().angle.getDegrees());
+  //     SmartDashboard.putNumber("RL Turn Enc", m_rearLeft.getPosition().angle.getDegrees());
+  //     SmartDashboard.putNumber("RR Turn Enc", m_rearRight.getPosition().angle.getDegrees());
 
-      SmartDashboard.putNumber("RL Drive encoder", m_rearLeft.getPosition().distanceMeters);
-    }
+  //     SmartDashboard.putNumber("RL Drive encoder", m_rearLeft.getPosition().distanceMeters);
+  //   }
 
     Vector<Double> robotVector = new Vector<>();
     if (Math.abs(xVelocity) <= 0.1) {
@@ -531,12 +541,12 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
-  public void resetEncoders() {
-    m_frontLeft.resetEncoder();
-    m_rearLeft.resetEncoder();
-    m_frontRight.resetEncoder();
-    m_rearRight.resetEncoder();
-  }
+  // public void resetEncoders() {
+  //   m_frontLeft.resetEncoder();
+  //   m_rearLeft.resetEncoder();
+  //   m_frontRight.resetEncoder();
+  //   m_rearRight.resetEncoder();
+  // }
 
   /* Sets how fast the human driver can drive */
   public void setMaxOutput(double val) {
