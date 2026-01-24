@@ -35,12 +35,20 @@ public class AutoCommandManager {
     public TrajectoryConfig reverseConfig;
 
     public AutoCommandManager(
+<<<<<<< HEAD
       //  PhotonVisionGS m_visionGS,
+=======
+        // PhotonVisionGS m_visionGS,
+>>>>>>> 3627b6a4476605ae3449a1d1b47829cf8eef2162
         DriveSubsystem m_robotDrive)
          {
 
         configureNamedCommands(
+<<<<<<< HEAD
             //m_visionGS,
+=======
+            // m_visionGS,
+>>>>>>> 3627b6a4476605ae3449a1d1b47829cf8eef2162
             m_robotDrive
       );
 
@@ -95,7 +103,11 @@ public class AutoCommandManager {
     }
 
     public void configureNamedCommands(
+<<<<<<< HEAD
        // PhotonVisionGS m_visionGS,
+=======
+        // PhotonVisionGS m_visionGS,
+>>>>>>> 3627b6a4476605ae3449a1d1b47829cf8eef2162
         DriveSubsystem m_robotDrive
     ) {
         NamedCommands.registerCommand("AutoLineUp", Commands.runOnce(() -> m_robotDrive.isAutoRotate = RotationEnum.STRAFEONTARGET));

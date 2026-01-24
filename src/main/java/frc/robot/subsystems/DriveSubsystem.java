@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -99,7 +100,7 @@ public class DriveSubsystem extends SubsystemBase {
   Joystick m_Joystick = new Joystick(OIConstants.kDriverControllerPort);
 
   // The imu sensor
-    public final PigeonIMU m_imu = new PigeonIMU(Constants.SwerveConstants.kIMU_ID);
+  public final PigeonIMU m_imu = new PigeonIMU(Constants.SwerveConstants.kIMU_ID);
   // private final PhotonVisionGS m_vision;
   // public final AlignToPoleX m_alignToPoleX;
 
@@ -131,11 +132,11 @@ public class DriveSubsystem extends SubsystemBase {
   public Field2d m_field;
   
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystem()//PhotonVisionGS m_vision, AlignToPoleX m_alignToPoleX, Limelight4Test m_limelight, DriveModifier...driveModifiers) 
-  {    
+  public DriveSubsystem() { //PhotonVisionGS m_vision, AlignToPoleX m_alignToPoleX, Limelight4Test m_limelight, DriveModifier...driveModifiers) {
+    
     m_turnCtrl.setTolerance(10.00);
-    //this.m_vision = m_vision;
-   // this.m_alignToPoleX = m_alignToPoleX;
+    // this.m_vision = m_vision;
+    // this.m_alignToPoleX = m_alignToPoleX;
     
     offset_FL = SwerveConstants.kFrontLeftMagEncoderOffsetDegrees;
     offset_RL = SwerveConstants.kRearLeftMagEncoderOffsetDegrees;
@@ -418,7 +419,7 @@ public class DriveSubsystem extends SubsystemBase {
     // }
 
     SmartDashboard.putBoolean("Is Driving Slow", isDrivingSlow);
-   // SmartDashboard.putNumber("FL Desired Position", m_frontLeft.getDesiredPosition());
+    // SmartDashboard.putNumber("FL Desired Position", m_frontLeft.getDesiredPosition());
 
     // Apply joystick deadband
     xSpeed = isAutoXSpeed ? xSpeed : MathUtil.applyDeadband(xSpeed, OIConstants.kDeadband, 1.0);

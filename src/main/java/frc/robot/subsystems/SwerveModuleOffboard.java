@@ -30,7 +30,6 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 //import com.ctre.phoenix6.controls.PositionVoltage;
 //import com.ctre.phoenix6.controls.VelocityVoltage;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -41,18 +40,21 @@ import frc.robot.Constants;
 import frc.robot.Constants.ConstantsOffboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class SwerveModuleOffboard {
   // Drive motor
   private final SparkMax m_driveMotor;
   private final RelativeEncoder m_driveEncoder;
-  private final  SparkClosedLoopController m_drivePID;
-  private static final SparkMaxConfig driveConfig = new SparkMaxConfig();
+  private final SparkClosedLoopController m_drivePID;
+
   // private final VelocityVoltage driveVelocity = new VelocityVoltage(0);
   // private final PositionVoltage turnPosition =  new PositionVoltage(0);
 
-
-  //private static final Slot0Configs rotationConfigPID = rotationConfig.Slot0;
+  private static final SparkMaxConfig driveConfig = new SparkMaxConfig();
+  // private static final CANcoderConfiguration testCanCoderConfig = new CANcoderConfiguration();
+  // private static final Slot0Configs rotationConfigPID = rotationConfig.Slot0;
 
   private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(0.32, 1.51, 0.27);
 
@@ -88,72 +90,65 @@ public class SwerveModuleOffboard {
     // Create turning motor objects
     m_turningMotor = new SparkMax(turningMotorID, MotorType.kBrushless);
     m_turningEncoder = m_turningMotor.getEncoder();
-    m_turningPID = m_driveMotor.getClosedLoopController();
+    m_turningPID = m_turningMotor.getClosedLoopController();
 
     // Create steering encoder objects (high resolution encoder)
     m_canCoder = new CANcoder(magEncoderID, "rio");
     m_canCoderOffsetDegrees = magEncoderOffsetDegrees;
+    SignalLogger.stop();
 
-driveConfig
-.smartCurrentLimit(DriveConstants.DRIVE_MOTOR_CURRENT_LIMIT)
-.idleMode(IdleMode.kBrake);
+    driveConfig
+        .smartCurrentLimit(DriveConstants.DRIVE_MOTOR_CURRENT_LIMIT)
+        .idleMode(IdleMode.kBrake);
+    driveConfig.encoder
+        .positionConversionFactor(1)
+        .velocityConversionFactor(ConstantsOffboard.DRIVE_RPM_TO_METERS_PER_SECOND);
+    driveConfig.closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        // Set PID values for velocity control in slot 1
+        .p(0.0001, ClosedLoopSlot.kSlot1)
+        .i(0, ClosedLoopSlot.kSlot1)
+        .d(0, ClosedLoopSlot.kSlot1)
+        .outputRange(-1, 1, ClosedLoopSlot.kSlot1)
+        .feedForward
+          // kV is now in Volts, so we multiply by the nominal voltage (12V)
+          .kV(12.0 / 5767, ClosedLoopSlot.kSlot1);
+    driveConfig.closedLoop.maxMotion
+        .maxAcceleration(500, ClosedLoopSlot.kSlot1)
+        .cruiseVelocity(6000, ClosedLoopSlot.kSlot1)
+        .allowedProfileError(1, ClosedLoopSlot.kSlot1);
 
-driveConfig.encoder
-.positionConversionFactor(1)
-.velocityConversionFactor(ConstantsOffboard.DRIVE_RPM_TO_METERS_PER_SECOND);
-driveConfig.closedLoop
-.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-.p(0.0001, ClosedLoopSlot.kSlot3)
-.i(0, ClosedLoopSlot.kSlot3)
-.d(0, ClosedLoopSlot.kSlot3)
-.outputRange(-1, 1, ClosedLoopSlot.kSlot3)
-.feedForward
-.kV(12/5767, ClosedLoopSlot.kSlot3);
+    m_driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
-driveConfig.closedLoop.maxMotion
-.cruiseVelocity(500,ClosedLoopSlot.kSlot3)
-.maxAcceleration(6000,ClosedLoopSlot.kSlot3)
-.allowedProfileError(1, ClosedLoopSlot.kSlot3);
+    turningConfig
+        .smartCurrentLimit(DriveConstants.DRIVE_MOTOR_CURRENT_LIMIT)
+        .idleMode(IdleMode.kBrake);
+    turningConfig.encoder
+        .positionConversionFactor(ConstantsOffboard.ANGLE_RPM_TO_RADIANS_PER_SECOND)
+        .velocityConversionFactor(1);
+    turningConfig.closedLoop
+        // Set PID values for position control in slot 1
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .p(0.1, ClosedLoopSlot.kSlot1)
+        .i(0, ClosedLoopSlot.kSlot1)
+        .d(0, ClosedLoopSlot.kSlot1)
+        .outputRange(-1, 1, ClosedLoopSlot.kSlot1);
+        // .feedForward
+        //   // kV is now in Volts, so we multiply by the nominal voltage (12V)
+        //   .kV(12.0 / 5767, ClosedLoopSlot.kSlot1);
+    turningConfig.closedLoop.maxMotion
+        .cruiseVelocity(1000, ClosedLoopSlot.kSlot1)
+        .maxAcceleration(1000, ClosedLoopSlot.kSlot1)
+        .allowedProfileError(1, ClosedLoopSlot.kSlot1);
 
-m_driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters,PersistMode.kNoPersistParameters);
+    m_turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
-turningConfig
-.smartCurrentLimit(40)
-.idleMode(IdleMode.kBrake);
-
-turningConfig.encoder
-.positionConversionFactor(ConstantsOffboard.DRIVE_RPM_TO_METERS_PER_SECOND)
-.velocityConversionFactor(1);
-
-turningConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-.p(0.1, ClosedLoopSlot.kSlot2)
-.i(0, ClosedLoopSlot.kSlot2)
-.d(0, ClosedLoopSlot.kSlot2)
-.outputRange(-1, 1, ClosedLoopSlot.kSlot2);
-
-turningConfig.closedLoop.maxMotion
-.cruiseVelocity(1000,ClosedLoopSlot.kSlot2)
-.maxAcceleration(1000,ClosedLoopSlot.kSlot2)
-.allowedProfileError(1, ClosedLoopSlot.kSlot2);
-
-m_turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters,PersistMode.kNoPersistParameters);
-
-
-
-
-
-
-
-//.feedForward
-//.kV(12/5767, ClosedLoopSlot.kSlot1);
-    
     configureDevices();
 
     lastAngle = getState().angle.getRadians();
 
     m_driveEncoder.setPosition(0);
     m_turningEncoder.setPosition(0);
-
   }
 
   /**
@@ -194,7 +189,7 @@ m_turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters,PersistMo
     m_turningPID.setSetpoint(state.angle.getRadians(),ControlType.kMAXMotionPositionControl,ClosedLoopSlot.kSlot2);
     //m_turningMotor.setControl(turnPosition.withEnableFOC(false).withPosition(turnPosition.Position));
     // m_turningPID.setReference(state.angle.getRadians(), (ConstantsOffboard.ANGLE_MOTOR_PROFILED_MODE) ? SparkMax.ControlType.kMAXMotionPositionControl : SparkMax.ControlType.kPosition);
-    
+    m_turningPID.setSetpoint(state.angle.getRadians(), ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot1);
   }
 
   /** Zeroes all the SwerveModule encoders. */
