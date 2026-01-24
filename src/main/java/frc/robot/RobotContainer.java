@@ -4,6 +4,7 @@
 
 package frc.robot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.Constants.ConstantsOffboard;
 import frc.robot.Constants.OIConstants;
@@ -153,6 +154,10 @@ public class RobotContainer {
     m_driver.b()
     .whileTrue(Commands.runOnce(() -> m_robotDrive.isAutoYSpeed = false).alongWith(Commands.runOnce(() -> m_robotDrive.isAutoXSpeed = false).alongWith(Commands.runOnce(() -> m_robotDrive.isAutoRotate = RotationEnum.NONE))));
 
+    // Debug
+    m_driver.x().onTrue(Commands.runOnce (() -> m_robotDrive.setDebugState(0.0, 0.0)));
+    m_driver.y().onTrue(Commands.runOnce (() -> m_robotDrive.setDebugState(0.0, 90.0)));
+
     // While the left bumper on operator controller is held, intake Fuel
     m_driver.leftBumper().whileTrue(new Intake(fuelSubsystem));
     // While the right bumper on the operator controller is held, spin up for 1
@@ -163,6 +168,10 @@ public class RobotContainer {
     m_driver.a().whileTrue(new Eject(fuelSubsystem));
 
     fuelSubsystem.setDefaultCommand(fuelSubsystem.run(() -> fuelSubsystem.stop()));
+
+    m_driver.povUp().onTrue(Commands.runOnce (() -> m_driver.setRumble(RumbleType.kBothRumble, 1.0)));
+    m_driver.povDown().onTrue(Commands.runOnce (() -> m_driver.setRumble(RumbleType.kBothRumble, 0.0)));
+
   }
 
   public Command getAutonomousCommand() {

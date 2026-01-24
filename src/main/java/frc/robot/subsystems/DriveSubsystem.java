@@ -499,6 +499,13 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(desiredStates[SwerveConstants.kSwerveRR_enum]);
   }
 
+  public void setDebugState(double speed, double degrees) {
+    m_frontLeft.setDesiredState(new SwerveModuleState(speed, new Rotation2d(Units.degreesToRadians(degrees))));
+    m_frontRight.setDesiredState(new SwerveModuleState(speed, new Rotation2d(Units.degreesToRadians(degrees))));
+    m_rearLeft.setDesiredState(new SwerveModuleState(speed, new Rotation2d(Units.degreesToRadians(degrees))));
+    m_rearRight.setDesiredState(new SwerveModuleState(speed, new Rotation2d(Units.degreesToRadians(degrees))));
+  }
+
   public void driveRobotRelative(ChassisSpeeds speeds){
     // SmartDashboard.putNumber("Robot Auto X", speeds.vxMetersPerSecond);
     // SmartDashboard.putNumber("Auto Rotate Speed", autoRotateSpeed);
