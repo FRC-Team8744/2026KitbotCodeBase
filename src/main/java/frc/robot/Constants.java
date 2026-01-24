@@ -147,17 +147,17 @@ public final class Constants {
     public static final int kRearLeftMagEncoderPort = 12; // 18
     public static final int kRearRightMagEncoderPort = 3; // 21
 
-    public static final int kAlgaeMechanism = 19;
+    //public static final int kAlgaeMechanism = 19;
 
     // Only disable the steering angle optimizer when measuring the CANcoder offsets!
-    public static final boolean DISABLE_ANGLE_OPTIMIZER = false;
+    public static final boolean DISABLE_ANGLE_OPTIMIZER = true;
 
     // Note: Zeroing the CanCoder in Tuner X doesn't seem to affect the reported absolute position.
-    public static final double kFrontLeftMagEncoderOffsetDegrees = 1 - 0.125244; // 3
-    public static final double kFrontRightMagEncoderOffsetDegrees = 1 - 0.846191; // 6
-    public static final double kRearLeftMagEncoderOffsetDegrees = 1 - 0.224121; // 12
-    public static final double kRearRightMagEncoderOffsetDegrees = 1 - 0.248779; // 9
-
+    public static final double kFrontLeftMagEncoderOffsetDegrees =0;// 1 - 0.125244; // 3
+    public static final double kFrontRightMagEncoderOffsetDegrees = 0;//1 - 0.846191; // 6
+    public static final double kRearLeftMagEncoderOffsetDegrees = 0;//1 - 0.224121; // 12
+    public static final double kRearRightMagEncoderOffsetDegrees = 0;//1 - 0.248779; // 9
+    
     // Distance between centers of right and left wheels on robot
     public static final double kTrackWidth = Units.inchesToMeters(20.472);
 

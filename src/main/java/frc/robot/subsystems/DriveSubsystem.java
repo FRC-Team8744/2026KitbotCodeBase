@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.util.Arrays;
 import java.util.Vector;
 
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -98,7 +99,7 @@ public class DriveSubsystem extends SubsystemBase {
   Joystick m_Joystick = new Joystick(OIConstants.kDriverControllerPort);
 
   // The imu sensor
-  public final Pigeon2 m_imu = new Pigeon2(Constants.SwerveConstants.kIMU_ID);
+    public final PigeonIMU m_imu = new PigeonIMU(Constants.SwerveConstants.kIMU_ID);
   // private final PhotonVisionGS m_vision;
   // public final AlignToPoleX m_alignToPoleX;
 
@@ -173,7 +174,7 @@ public class DriveSubsystem extends SubsystemBase {
   m_odometry =
       new SwerveDriveOdometry(
           SwerveConstants.kDriveKinematics,
-          m_imu.getRotation2d(),
+          Rotation2d.fromDegrees(m_imu.getYaw()),
           new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -223,7 +224,7 @@ public class DriveSubsystem extends SubsystemBase {
     m_poseEstimator =
     new SwerveDrivePoseEstimator(
       Constants.SwerveConstants.kDriveKinematics,
-      m_imu.getRotation2d(),
+      Rotation2d.fromDegrees(m_imu.getYaw()),
       getModulePositions(),
       getPose(),
       VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
@@ -248,13 +249,13 @@ public class DriveSubsystem extends SubsystemBase {
     //   }
     // }
 
-    m_poseEstimator.update(m_imu.getRotation2d(), getModulePositions());
+    m_poseEstimator.update(Rotation2d.fromDegrees(m_imu.getYaw()), getModulePositions());
 
     // Look into
     if (AutoCommandManager.isSim = false) {m_field.setRobotPose(m_poseEstimator.getEstimatedPosition());}
 
     m_odometry.update(
-        m_imu.getRotation2d(),
+        Rotation2d.fromDegrees(m_imu.getYaw()),
         new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -269,19 +270,26 @@ public class DriveSubsystem extends SubsystemBase {
     // SmartDashboard.putNumber("Gyro pitch", m_imu.getPitch().getValueAsDouble());
     // SmartDashboard.putNumber("Gyro roll", m_imu.getRoll().getValueAsDouble());
 
-    SmartDashboard.putNumber("Estimated Pose X", m_poseEstimator.getEstimatedPosition().getX());
-    SmartDashboard.putNumber("Estimated Pose Y", m_poseEstimator.getEstimatedPosition().getY());
+    //SmartDashboard.putNumber("Estimated Pose X", m_poseEstimator.getEstimatedPosition().getX());
+    //SmartDashboard.putNumber("Estimated Pose Y", m_poseEstimator.getEstimatedPosition().getY());
 
-    SmartDashboard.putNumber("Estimated Pose Rotation", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+    //SmartDashboard.putNumber("Estimated Pose Rotation", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
 
-    double[] poseArray = {getEstimatedPose().getX(), getEstimatedPose().getY(), getEstimatedPose().getRotation().getRadians()};
-    SmartDashboard.putNumberArray("Estimated Pose", poseArray);
+    //double[] poseArray = {getEstimatedPose().getX(), getEstimatedPose().getY(), getEstimatedPose().getRotation().getRadians()};
+    //SmartDashboard.putNumberArray("Estimated Pose", poseArray);
 
-    SmartDashboard.putBoolean("yCheck", Constants.yCheck);
+    //SmartDashboard.putBoolean("yCheck", Constants.yCheck);
 
-    SmartDashboard.putNumber("FL current Angle", m_frontLeft.getCurrentDriveAngle());
-
-    // SmartDashboard.putNumber("Yep", m_frontLeft.getVelocity());
+    SmartDashboard.putNumber("FL Angle", m_frontLeft.getWheelAngleDegrees()) ;
+    SmartDashboard.putNumber("FR Angle", m_frontRight.getWheelAngleDegrees());
+    SmartDashboard.putNumber("RL Angle", m_rearLeft.getWheelAngleDegrees())  ;
+    SmartDashboard.putNumber("RR Angle", m_rearRight.getWheelAngleDegrees()) ;
+    
+    SmartDashboard.putNumber("FL Velocity", m_frontLeft.getVelocity());
+    SmartDashboard.putNumber("FR Velocity", m_frontLeft.getVelocity());
+    SmartDashboard.putNumber("RL Velocity", m_frontLeft.getVelocity());
+    SmartDashboard.putNumber("RR Velocity", m_frontLeft.getVelocity());
+  
 
     pose_publisher.set(getPose());
     swerve_publisher.set(new SwerveModuleState[] {
@@ -352,7 +360,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void zeroIMU() {
     m_imu.setYaw(0.0);
-    m_poseEstimator.resetPosition(m_imu.getRotation2d(), getModulePositions(), getPose());
+    m_poseEstimator.resetPosition(Rotation2d.fromDegrees(m_imu.getYaw()), getModulePositions(), getPose());
   }
 
   /**
@@ -362,7 +370,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(
-        m_imu.getRotation2d(),
+        Rotation2d.fromDegrees(m_imu.getYaw()),
         new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -370,7 +378,7 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearRight.getPosition()
         },
         pose);
-    m_poseEstimator.resetPosition(m_imu.getRotation2d(), getModulePositions(), pose);
+    m_poseEstimator.resetPosition(Rotation2d.fromDegrees(m_imu.getYaw()), getModulePositions(), pose);
   }
 
   /**
@@ -460,7 +468,7 @@ public class DriveSubsystem extends SubsystemBase {
     var swerveModuleStates =
         SwerveConstants.kDriveKinematics.toSwerveModuleStates(
             fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, m_imu.getRotation2d())
+                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(m_imu.getYaw()))
                 : new ChassisSpeeds(xSpeed, ySpeed, rot));
     SwerveDriveKinematics.desaturateWheelSpeeds( swerveModuleStates, SwerveConstants.kMaxSpeedMetersPerSecond);
     m_frontLeft.setDesiredState(swerveModuleStates[SwerveConstants.kSwerveFL_enum]);
@@ -579,10 +587,10 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void setEstimatedPose(Pose2d pose) {
-    m_poseEstimator.resetPosition(m_imu.getRotation2d(), getModulePositions(), pose);
+    m_poseEstimator.resetPosition(Rotation2d.fromDegrees(m_imu.getYaw()), getModulePositions(), pose);
   }
 
   public void zeroEstimatedPose() {
-    m_poseEstimator.resetPosition(m_imu.getRotation2d(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
+    m_poseEstimator.resetPosition(Rotation2d.fromDegrees(m_imu.getYaw()), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
   }
 }

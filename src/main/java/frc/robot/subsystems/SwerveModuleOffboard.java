@@ -103,17 +103,17 @@ driveConfig.encoder
 .velocityConversionFactor(ConstantsOffboard.DRIVE_RPM_TO_METERS_PER_SECOND);
 driveConfig.closedLoop
 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-.p(0.0001, ClosedLoopSlot.kSlot1)
-.i(0, ClosedLoopSlot.kSlot1)
-.d(0, ClosedLoopSlot.kSlot1)
-.outputRange(-1, 1, ClosedLoopSlot.kSlot1)
+.p(0.0001, ClosedLoopSlot.kSlot3)
+.i(0, ClosedLoopSlot.kSlot3)
+.d(0, ClosedLoopSlot.kSlot3)
+.outputRange(-1, 1, ClosedLoopSlot.kSlot3)
 .feedForward
-.kV(12/5767, ClosedLoopSlot.kSlot1);
+.kV(12/5767, ClosedLoopSlot.kSlot3);
 
 driveConfig.closedLoop.maxMotion
-.cruiseVelocity(500,ClosedLoopSlot.kSlot1)
-.maxAcceleration(6000,ClosedLoopSlot.kSlot1)
-.allowedProfileError(1, ClosedLoopSlot.kSlot1);
+.cruiseVelocity(500,ClosedLoopSlot.kSlot3)
+.maxAcceleration(6000,ClosedLoopSlot.kSlot3)
+.allowedProfileError(1, ClosedLoopSlot.kSlot3);
 
 m_driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters,PersistMode.kNoPersistParameters);
 
@@ -126,15 +126,15 @@ turningConfig.encoder
 .velocityConversionFactor(1);
 
 turningConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-.p(0.1, ClosedLoopSlot.kSlot1)
-.i(0, ClosedLoopSlot.kSlot1)
-.d(0, ClosedLoopSlot.kSlot1)
-.outputRange(-1, 1, ClosedLoopSlot.kSlot1);
+.p(0.1, ClosedLoopSlot.kSlot2)
+.i(0, ClosedLoopSlot.kSlot2)
+.d(0, ClosedLoopSlot.kSlot2)
+.outputRange(-1, 1, ClosedLoopSlot.kSlot2);
 
 turningConfig.closedLoop.maxMotion
-.cruiseVelocity(1000,ClosedLoopSlot.kSlot1)
-.maxAcceleration(1000,ClosedLoopSlot.kSlot1)
-.allowedProfileError(1, ClosedLoopSlot.kSlot1);
+.cruiseVelocity(1000,ClosedLoopSlot.kSlot2)
+.maxAcceleration(1000,ClosedLoopSlot.kSlot2)
+.allowedProfileError(1, ClosedLoopSlot.kSlot2);
 
 m_turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters,PersistMode.kNoPersistParameters);
 
@@ -189,9 +189,9 @@ m_turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters,PersistMo
     // Set the PID reference states
     // driveVelocity.Velocity = (state.speedMetersPerSecond * 60) / Constants.ConstantsOffboard.WHEEL_CIRCUMFERENCE;
     // driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
-    m_drivePID.setSetpoint(state.speedMetersPerSecond, ControlType.kMAXMotionVelocityControl,ClosedLoopSlot.kSlot1);
+    m_drivePID.setSetpoint(state.speedMetersPerSecond, ControlType.kMAXMotionVelocityControl,ClosedLoopSlot.kSlot3);
     //m_drivePID.setSetpoint(state.angle.getRadians(), (ConstantsOffboard.ANGLE_MOTOR_PROFILED_MODE) ? SparkMax.ControlType.kVelocity : SparkMax.ControlType.kPosition);
-    m_turningPID.setSetpoint(state.angle.getRadians(),ControlType.kMAXMotionPositionControl,ClosedLoopSlot.kSlot1);
+    m_turningPID.setSetpoint(state.angle.getRadians(),ControlType.kMAXMotionPositionControl,ClosedLoopSlot.kSlot2);
     //m_turningMotor.setControl(turnPosition.withEnableFOC(false).withPosition(turnPosition.Position));
     // m_turningPID.setReference(state.angle.getRadians(), (ConstantsOffboard.ANGLE_MOTOR_PROFILED_MODE) ? SparkMax.ControlType.kMAXMotionPositionControl : SparkMax.ControlType.kPosition);
     
@@ -284,8 +284,8 @@ m_turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters,PersistMo
     return m_turningMotor.getOutputCurrent();
   }
 
-  public double getCurrentDriveAngle() {
-    return (m_canCoder.getAbsolutePosition().getValueAsDouble());
+  public double getWheelAngleDegrees() {
+    return (m_canCoder.getAbsolutePosition().getValueAsDouble() * 180.0);
   }
 
   private void configureDevices() {
@@ -300,26 +300,14 @@ m_turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters,PersistMo
     m_canCoder.getPosition().setUpdateFrequency(100);
     m_canCoder.getVelocity().setUpdateFrequency(100);
 
-
-
-
-
-
-
-
-
-
-
-
-
     // According to this:
     // https://www.chiefdelphi.com/t/ctre-phoenix-pro-to-phoenix-6-looking-back-and-looking-ahead/437313/27
     // When using Phoenix6, the CanCoder should not have problems on startup as long as we wait for an update and check for errors.
     var posVal = m_canCoder.getAbsolutePosition().waitForUpdate(0.1); // This actaully waits that long! Don't call after init!
     if(posVal.getStatus().isOK()) {
         /* Perform seeding */
-        // double val = posVal.getValueAsDouble();
-        // m_turningEncoder.setPosition(Units.degreesToRadians(val * 360.0 - m_canCoderOffsetDegrees));
+         double val = posVal.getValueAsDouble();
+         m_turningEncoder.setPosition(Units.degreesToRadians(val * 360.0 - m_canCoderOffsetDegrees));
         // m_turningEncoder.setPosition(Units.degreesToRadians(val * 360.0));
     } else {
         /* Report error and retry later */
