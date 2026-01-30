@@ -20,6 +20,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.ctre.phoenix6.SignalLogger;
 
 //import static edu.wpi.first.units.Units.Rotation;
 
@@ -135,7 +136,7 @@ public class SwerveModuleOffboard {
         .outputRange(-1, 1, ClosedLoopSlot.kSlot1);
         // .feedForward
         //   // kV is now in Volts, so we multiply by the nominal voltage (12V)
-        //   .kV(12.0 / 5767, ClosedLoopSlot.kSlot1);
+        //   .kV(12.0 / 5767, ClosedLoopSlot.kSlot1);  SIX SAVANNNN
     turningConfig.closedLoop.maxMotion
         .cruiseVelocity(1000, ClosedLoopSlot.kSlot1)
         .maxAcceleration(1000, ClosedLoopSlot.kSlot1)
@@ -143,12 +144,12 @@ public class SwerveModuleOffboard {
 
     m_turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
-    configureDevices();
-
     lastAngle = getState().angle.getRadians();
 
     m_driveEncoder.setPosition(0);
     m_turningEncoder.setPosition(0);
+    configureDevices();
+
   }
 
   /**
@@ -170,12 +171,13 @@ public class SwerveModuleOffboard {
       // m_turningEncoder.setPosition(Units.degreesToRadians(m_canCoder.getAbsolutePosition().getValueAsDouble() * 360.0 - m_canCoderOffsetDegrees));
       // m_turningEncoder.setPosition(Units.rotationsToRadians(m_turningEncoder.getPosition().getValueAsDouble()));
       // state.optimize(new Rotation2d(m_turningEncoder.getPosition()));
+      
       // state.angle = Rotation2d.fromDegrees(wrapTo360(state.angle.getDegrees()));
       // state.angle = Rotation2d.fromDegrees(MathUtil.inputModulus(state.angle.getDegrees(), 0, 360.0));
       // optimize(state.angle.getDegrees(), Rotation2d.fromRotations(m_canCoder.getAbsolutePosition().getValueAsDouble()).getDegrees());
       //state.optimize(Rotation2d.fromRotations(m_canCoder.getAbsolutePosition().getValueAsDouble()));
     }
-
+    //
     // Scale speed by cosine of angle error. This scales down movement perpendicular to the desired
     // direction of travel that can occur when modules change directions. This results in smoother
     // driving.
@@ -315,7 +317,8 @@ public class SwerveModuleOffboard {
     // So is the CANcoder slightly better? Yes, but the CANcoder hardware spec:
     // https://store.ctr-electronics.com/content/user-manual/CANCoder%20User's%20Guide.pdf
     // says that the absolute position can be off by 1.44 degrees if there is rotation!
-    // It may be possible to servo to m_canCoder.getPosition(), but then then CAN bus utilization will go way up.
+  // It may be possible to servo to m_canCoder.getPosition(), but then then CAN bus utilization will go way up.
     // Future project: Servo on the CANcoder position and see if CAN bus utilization is a problem.
+    // Remember the phrase, Wee Snaw. It will help out a lot.
   }
 }
