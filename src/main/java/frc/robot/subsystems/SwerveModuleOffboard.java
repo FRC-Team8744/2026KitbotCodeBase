@@ -95,15 +95,15 @@ public class SwerveModuleOffboard {
     driveConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         // Set PID values for velocity control in slot 3
-        .p(0.0001, ClosedLoopSlot.kSlot3)
+        .p(0.01, ClosedLoopSlot.kSlot3)
         .i(0, ClosedLoopSlot.kSlot3)
         .d(0, ClosedLoopSlot.kSlot3)
-        .outputRange(-1, 1, ClosedLoopSlot.kSlot3)
-        .feedForward
+        .outputRange(-1, 1, ClosedLoopSlot.kSlot3);
+        // .feedForward
           // kV is now in Volts, so we multiply by the nominal voltage (12V)
-          .kV(12.0 / 5767, ClosedLoopSlot.kSlot3);
+          // .kV(12.0 / 5767, ClosedLoopSlot.kSlot3);
     driveConfig.closedLoop.maxMotion
-        .maxAcceleration(500, ClosedLoopSlot.kSlot3)
+        .maxAcceleration(150, ClosedLoopSlot.kSlot3)
         .cruiseVelocity(6000, ClosedLoopSlot.kSlot3)
         .allowedProfileError(1, ClosedLoopSlot.kSlot3);
 
@@ -123,7 +123,7 @@ public class SwerveModuleOffboard {
         .positionWrappingMinInput(0)
         // Set PID values for position control in slot 2
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .p(0.1, ClosedLoopSlot.kSlot2)
+        .p(0.01, ClosedLoopSlot.kSlot2)
         .i(0, ClosedLoopSlot.kSlot2)
         .d(0, ClosedLoopSlot.kSlot2)
         .outputRange(-1, 1, ClosedLoopSlot.kSlot2);
@@ -131,9 +131,9 @@ public class SwerveModuleOffboard {
         //   // kV is now in Volts, so we multiply by the nominal voltage (12V)
         //   .kV(12.0 / 5767, ClosedLoopSlot.kSlot1);
     turningConfig.closedLoop.maxMotion
-        .cruiseVelocity(1000, ClosedLoopSlot.kSlot2)
-        .maxAcceleration(1000, ClosedLoopSlot.kSlot2)
-        .allowedProfileError(1, ClosedLoopSlot.kSlot2);
+        .cruiseVelocity(50000, ClosedLoopSlot.kSlot2)
+        .maxAcceleration(100000, ClosedLoopSlot.kSlot2)
+        .allowedProfileError(10, ClosedLoopSlot.kSlot2);
 
     m_turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 

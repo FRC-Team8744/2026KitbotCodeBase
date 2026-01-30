@@ -165,7 +165,9 @@ public class RobotContainer {
     m_driver.rightBumper().whileTrue(new LaunchSequence(fuelSubsystem));
     // While the A button is held on the operator controller, eject fuel back out
     // the intake
-    m_driver.a().whileTrue(new Eject(fuelSubsystem));
+    // m_driver.a().whileTrue(new Eject(fuelSubsystem));
+    m_driver.a().whileTrue(Commands.run (() -> fuelSubsystem.setIntake(5)));
+    m_driver.b().whileTrue(Commands.run (() -> fuelSubsystem.setIntake(1)));
 
     fuelSubsystem.setDefaultCommand(fuelSubsystem.run(() -> fuelSubsystem.stop()));
 

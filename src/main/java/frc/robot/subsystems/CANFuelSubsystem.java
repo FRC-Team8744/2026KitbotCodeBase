@@ -19,14 +19,14 @@ import static frc.robot.Constants.FuelConstants.*;
 public class CANFuelSubsystem extends SubsystemBase {
   private final SparkMax feederRoller;
   private final SparkMax intakeLauncherRoller;
-  // private final SparkMax intake;
+  private final SparkMax intake;
 
   /** Creates a new CANBallSubsystem. */
   public CANFuelSubsystem() {
     // create brushless motors for each of the motors on the launcher mechanism
     intakeLauncherRoller = new SparkMax(INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushless);
     feederRoller = new SparkMax(FEEDER_MOTOR_ID, MotorType.kBrushless);
-    // intake = new SparkMax(INTAKE_ID, MotorType.kBrushless);
+    intake = new SparkMax(INTAKE_ID, MotorType.kBrushless);
 
     // create the configuration for the feeder roller, set a current limit and apply
     // the config to the controller
@@ -48,7 +48,7 @@ public class CANFuelSubsystem extends SubsystemBase {
     SparkMaxConfig intakeConfig = new SparkMaxConfig();
     intakeConfig.inverted(false);
     intakeConfig.smartCurrentLimit(INTAKE_MOTOR_CURRENT_LIMIT);
-    // intake.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    intake.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // put default values for various fuel operations onto the dashboard
     // all commands using this subsystem pull values from the dashbaord to allow
@@ -74,14 +74,14 @@ public class CANFuelSubsystem extends SubsystemBase {
 
   // A method to set the voltage of the intake roller
   public void setIntake(double voltage) {
-    // intake.setVoltage(voltage);
+    intake.setVoltage(voltage);
   }
 
   // A method to stop the rollers
   public void stop() {
     feederRoller.set(0);
     intakeLauncherRoller.set(0);
-    // intake.set(0);
+    intake.set(0);
   }
 
   @Override
