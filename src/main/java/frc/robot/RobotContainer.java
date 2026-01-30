@@ -130,8 +130,8 @@ public class RobotContainer {
               () ->
                   m_robotDrive.drive(
                       -m_driver.getLeftY()  * SwerveConstants.kMaxSpeedTeleop,
-                      0, //-m_driver.getLeftX()  * SwerveConstants.kMaxSpeedTeleop,
-                      0, //m_driver.getRightX() * ConstantsOffboard.MAX_ANGULAR_RADIANS_PER_SECOND,
+                      -m_driver.getLeftX()  * SwerveConstants.kMaxSpeedTeleop,
+                      m_driver.getRightX() * ConstantsOffboard.MAX_ANGULAR_RADIANS_PER_SECOND,
                       false),
               m_robotDrive));
     // m_autoChooser = AutoBuilder.buildAutoChooser();  // Default auto will be 'Commands.none()'
@@ -155,8 +155,8 @@ public class RobotContainer {
     .whileTrue(Commands.runOnce(() -> m_robotDrive.isAutoYSpeed = false).alongWith(Commands.runOnce(() -> m_robotDrive.isAutoXSpeed = false).alongWith(Commands.runOnce(() -> m_robotDrive.isAutoRotate = RotationEnum.NONE))));
 
     // Debug
-    m_driver.x().onTrue(Commands.runOnce (() -> m_robotDrive.setDebugState(0.0, 0.0)));
-    m_driver.y().onTrue(Commands.runOnce (() -> m_robotDrive.setDebugState(0.0, 90.0)));
+    m_driver.x().whileTrue(Commands.runOnce (() -> m_robotDrive.setDebugState(5.0, 0.0)));
+    m_driver.y().whileTrue(Commands.runOnce (() -> m_robotDrive.setDebugState(10.0, 90.0)));
 
     // While the left bumper on operator controller is held, intake Fuel
     m_driver.leftBumper().whileTrue(new Intake(fuelSubsystem));

@@ -500,6 +500,9 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void setDebugState(double speed, double degrees) {
+    SmartDashboard.putNumber("Debug Speed", speed);
+    SmartDashboard.putNumber("Debug Degrees", degrees);
+
     m_frontLeft.setDesiredState(new SwerveModuleState(speed, new Rotation2d(Units.degreesToRadians(degrees))));
     m_frontRight.setDesiredState(new SwerveModuleState(speed, new Rotation2d(Units.degreesToRadians(degrees))));
     m_rearLeft.setDesiredState(new SwerveModuleState(speed, new Rotation2d(Units.degreesToRadians(degrees))));

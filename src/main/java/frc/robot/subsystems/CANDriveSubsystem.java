@@ -23,11 +23,11 @@ public class CANDriveSubsystem extends SubsystemBase {
   private final DifferentialDrive drive;
 
   public CANDriveSubsystem() {
-    // create brushed motors for drive
-    leftLeader = new SparkMax(60, MotorType.kBrushed);
-    leftFollower = new SparkMax(60, MotorType.kBrushed);
-    rightLeader = new SparkMax(60, MotorType.kBrushed);
-    rightFollower = new SparkMax(60, MotorType.kBrushed);
+    // create brushless motors for drive
+    leftLeader = new SparkMax(60, MotorType.kBrushless);
+    leftFollower = new SparkMax(60, MotorType.kBrushless);
+    rightLeader = new SparkMax(60, MotorType.kBrushless);
+    rightFollower = new SparkMax(60, MotorType.kBrushless);
 
     // set up differential drive class
     drive = new DifferentialDrive(leftLeader, rightLeader);
