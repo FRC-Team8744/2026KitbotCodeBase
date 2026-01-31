@@ -221,10 +221,10 @@ public final class Constants {
     public static final boolean ANGLE_MOTOR_PROFILED_MODE = false;
     /** Angle motor PID values for speed/acceleration limited mode. */
     // Reference: https://github.com/REVrobotics/SPARK-MAX-Examples/blob/master/Java/Smart%20Motion%20Example/src/main/java/frc/robot/Robot.java
-    public static final double ANGLE_KP_PROFILED = 0.00075;
+    public static final double ANGLE_KP_PROFILED = 2.4;
     public static final double ANGLE_KI_PROFILED = 0.0;
     public static final double ANGLE_KD_PROFILED = 0.0;
-    public static final double ANGLE_KF_PROFILED = 0.0003;
+    public static final double ANGLE_KF_PROFILED = 0.0;
     public static final double ANGLE_MAX_VEL_PROFILED = kMaximumSparkMaxRPM;  // Maximum Velocity, RPM
     public static final double ANGLE_MAX_ACC_PROFILED = 20000;  // Maximum Acceleration, RPM^2
     public static final double ANGLE_MAX_ERR_PROFILED = 0.02;  // Error tolerance of PID controller, rotations

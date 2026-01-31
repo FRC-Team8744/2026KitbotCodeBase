@@ -186,12 +186,12 @@ public class SwerveModuleOffboard {
     // Set the PID reference states
     // driveVelocity.Velocity = (state.speedMetersPerSecond * 60) / Constants.ConstantsOffboard.WHEEL_CIRCUMFERENCE;
     // driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
-    m_drivePID.setSetpoint(state.speedMetersPerSecond, ControlType.kMAXMotionVelocityControl,ClosedLoopSlot.kSlot3);
+    m_drivePID.setSetpoint(state.speedMetersPerSecond, ControlType.kVelocity,ClosedLoopSlot.kSlot3);
     //m_drivePID.setSetpoint(state.angle.getRadians(), (ConstantsOffboard.ANGLE_MOTOR_PROFILED_MODE) ? SparkMax.ControlType.kVelocity : SparkMax.ControlType.kPosition);
-    m_turningPID.setSetpoint(state.angle.getRadians(),ControlType.kMAXMotionPositionControl,ClosedLoopSlot.kSlot2);
+    m_turningPID.setSetpoint(state.angle.getRadians(),ControlType.kPosition,ClosedLoopSlot.kSlot2);
     //m_turningMotor.setControl(turnPosition.withEnableFOC(false).withPosition(turnPosition.Position));
     // m_turningPID.setReference(state.angle.getRadians(), (ConstantsOffboard.ANGLE_MOTOR_PROFILED_MODE) ? SparkMax.ControlType.kMAXMotionPositionControl : SparkMax.ControlType.kPosition);
-    m_turningPID.setSetpoint(state.angle.getRadians(), ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot1);
+    //m_turningPID.setSetpoint(state.angle.getRadians(), ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot1);
   }
 
   /** Zeroes all the SwerveModule encoders. */
