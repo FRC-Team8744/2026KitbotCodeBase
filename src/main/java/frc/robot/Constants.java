@@ -117,7 +117,6 @@ public final class Constants {
   public static double autoRotateSpeed = 0;
   public static boolean isAutoYSpeed = true;
 
-
   public Constants() {
     configureKrakens();
   }
@@ -128,12 +127,12 @@ public final class Constants {
     public static final double kMaxSpeedMetersPerSecond = (5.94 * kMaxSpeedPercentAuto) / 100;
     public static final double kMaxSpeedTeleop = (10.0 * kMaxSpeedPercentTeleop) / 100;
 
-    // The drive classes use the NWU axes convention (North-West-Up as external reference in the world frame).
-    // The positive X axis points ahead, the positive Y axis points left, and the positive Z axis points up.
+    // The drive classes use the eccentric NWU axes convention (North-West-Up as external reference in the world frame).
+    // The positive X axis points ahead, the positive Y axis points left, and the positive Z axis points up. 
     // We use NWU here because the rest of the library, and math in general, use NWU axes convention.
     // https://docs.wpilib.org/en/stable/docs/software/hardware-apis/motors/wpi-drive-classes.html#axis-conventions
     public static final int kFrontLeftDriveMotorPort = 7; // 8
-    public static final int kFrontRightDriveMotorPort = 4; // 3
+    public static final int kFrontRightDriveMotorPort = 4; // 3   
     public static final int kRearLeftDriveMotorPort = 10; // 17
     public static final int kRearRightDriveMotorPort = 1; // 20
 
@@ -237,7 +236,7 @@ public final class Constants {
     public static final PIDConstants ANGLE_PID = new PIDConstants(KRAKENROTATION_P, KRAKENROTATION_I, KRAKENROTATION_D);
     
     /** Swerve constraints. */
-    public static final double MAX_SPEED_IN_PERCENT = 100.0;
+public static final double MAX_SPEED_IN_PERCENT = 100.0;
     public static final double MAX_VELOCITY_METERS_PER_SECOND = 0.1 * MAX_SPEED_IN_PERCENT;
     public static final double MAX_ANGULAR_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND * 4/3;
     public static final double MAX_ANGULAR_DEGREES_PER_SECOND = Math.toDegrees(MAX_ANGULAR_RADIANS_PER_SECOND);
