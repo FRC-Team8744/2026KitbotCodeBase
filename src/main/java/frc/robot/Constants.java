@@ -153,10 +153,10 @@ public final class Constants {
     public static final boolean DISABLE_ANGLE_OPTIMIZER = true;
 
     // Note: Zeroing the CanCoder in Tuner X doesn't seem to affect the reported absolute position.
-    public static final double kFrontLeftMagEncoderOffsetDegrees =0;// 1 - 0.125244; // 3
-    public static final double kFrontRightMagEncoderOffsetDegrees = 0;//1 - 0.846191; // 6
-    public static final double kRearLeftMagEncoderOffsetDegrees = 0;//1 - 0.224121; // 12
-    public static final double kRearRightMagEncoderOffsetDegrees = 0;//1 - 0.248779; // 9
+    public static final double kFrontLeftMagEncoderOffsetDegrees =0.9169*360;// 1 - 0.125244; // 3
+    public static final double kFrontRightMagEncoderOffsetDegrees = 0.8769*360;//1 - 0.846191; // 6 !!!!!!!!!!!!!!!!!NEVES XIS 
+    public static final double kRearLeftMagEncoderOffsetDegrees = 0.2329*360;//1 - 0.224121; // 12
+    public static final double kRearRightMagEncoderOffsetDegrees = 0.3671*360;//1 - 0.248779; // 9// SIX SEVEN!!!!!!!!!!!!!!!!!!!!
     
     // Distance between centers of right and left wheels on robot
     public static final double kTrackWidth = Units.inchesToMeters(20.472);
@@ -199,10 +199,10 @@ public final class Constants {
     public static final boolean DRIVE_MOTOR_PROFILED_MODE = true;
     /** Angle motor PID values for speed/acceleration limited mode. */
     // Reference: https://github.com/REVrobotics/SPARK-MAX-Examples/blob/master/Java/Smart%20Motion%20Example/src/main/java/frc/robot/Robot.java
-    public static final double DRIVE_KP_PROFILED = 0.01;
+    public static final double DRIVE_KP_PROFILED = 0.015;
     public static final double DRIVE_KI_PROFILED = 0.0;
     public static final double DRIVE_KD_PROFILED = 0.0;
-    public static final double DRIVE_KF_PROFILED = 0.23;
+    public static final double DRIVE_KF_PROFILED = 0.2;
     public static final double DRIVE_MAX_VEL_PROFILED = kMaximumSparkMaxRPM;  // Maximum Velocity, RPM
     public static final double DRIVE_MAX_ACC_PROFILED = 20000;  // Maximum Acceleration, RPM^2
     public static final double DRIVE_MAX_ERR_PROFILED = 0.02;  // Error tolerance of PID controller, rotations
