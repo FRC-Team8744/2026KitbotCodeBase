@@ -66,7 +66,7 @@ public final class Constants {
   public static final int kDebugLevel = 0; // 0 = None, 1 = Errors, 2 = Info, 3 = Debug and USB data log
   
   public static final int kMaxSpeedPercentAuto = 100; //This effects Drive speed in telop DONT ASK ME WHY
-  public static final int kMaxSpeedPercentTeleop = 65; // 65
+  public static final int kMaxSpeedPercentTeleop = 100; // 65
   public static final int kMaxAccelerationPercent = 100;
   public static final double kDriverSpeedLimit = 1; // sets how much the max speed is modified by when you press down on the left stick basicly make go slower the default is 1 btw 
 
@@ -123,8 +123,8 @@ public final class Constants {
   public static final class MechanismConstants {}
 
   public static final class SwerveConstants {
-    public static final double kMaxSpeedMetersPerSecond = (5.94 * kMaxSpeedPercentAuto) / 100;
-    public static final double kMaxSpeedTeleop = (10.0 * kMaxSpeedPercentTeleop) / 100;
+    public static final double kMaxSpeedMetersPerSecond = (4.4 * kMaxSpeedPercentAuto) / 100;
+    public static final double kMaxSpeedTeleop = (3.0 * kMaxSpeedPercentTeleop) / 100;
 
     // The drive classes use the NWU axes convention (North-West-Up as external reference in the world frame).
     // The positive X axis points ahead, the positive Y axis points left, and the positive Z axis points up.
@@ -148,13 +148,13 @@ public final class Constants {
     public static final int kAlgaeMechanism = 19;
 
     // Only disable the steering angle optimizer when measuring the CANcoder offsets!
-    public static final boolean DISABLE_ANGLE_OPTIMIZER = false;
+    public static final boolean DISABLE_ANGLE_OPTIMIZER = true;
 
     // Note: Zeroing the CanCoder in Tuner X doesn't seem to affect the reported absolute position.
-    public static final double kFrontLeftMagEncoderOffsetDegrees = 85.6; //0.9169 * 360; //1 - 0.125244; // 3
-    public static final double kFrontRightMagEncoderOffsetDegrees = 42.5; //0.8769 * 360.0; //1 - 0.846191; // 6
-    public static final double kRearLeftMagEncoderOffsetDegrees = 351.3; //0.2329 *360.0; //1 - 0.224121; // 12
-    public static final double kRearRightMagEncoderOffsetDegrees = 352.0; //0.3671 * 360.0; //1 - 0.248779; // 9
+    public static final double kFrontLeftMagEncoderOffsetDegrees = 330.3; //0.418945 * 360; //0.9169 * 360; //1 - 0.125244; // 3
+    public static final double kFrontRightMagEncoderOffsetDegrees = 315.35; //0.375977 * 360; //0.8769 * 360.0; //1 - 0.846191; // 6
+    public static final double kRearLeftMagEncoderOffsetDegrees = 86.2; //0.742432 * 360; //0.2329 *360.0; //1 - 0.224121; // 12
+    public static final double kRearRightMagEncoderOffsetDegrees = 132.3; //0.865723 * 360; //0.3671 * 360.0; //1 - 0.248779; // 9
 
     // Distance between centers of right and left wheels on robot
     public static final double kTrackWidth = Units.inchesToMeters(20.472);
@@ -188,7 +188,7 @@ public final class Constants {
     public static final double DRIVE_RPM_TO_METERS_PER_SECOND = DRIVE_ROTATIONS_TO_METERS / 60.0;
     public static final double ANGLE_GEAR_RATIO = (150 / 7) / 1.0; // (150/7):1
     public static final double ANGLE_ROTATIONS_TO_RADIANS = (Math.PI * 2) / ANGLE_GEAR_RATIO;
-    public static final double ANGLE_RPM_TO_RADIANS_PER_SECOND = DRIVE_ROTATIONS_TO_METERS / 60.0;
+    public static final double ANGLE_RPM_TO_RADIANS_PER_SECOND = ANGLE_ROTATIONS_TO_RADIANS / 60.0;
 
     /** Current limiting. */
     public static final int DRIVE_CURRENT_LIMIT = 40;
@@ -197,13 +197,13 @@ public final class Constants {
     public static final boolean DRIVE_MOTOR_PROFILED_MODE = true;
     /** Angle motor PID values for speed/acceleration limited mode. */
     // Reference: https://github.com/REVrobotics/SPARK-MAX-Examples/blob/master/Java/Smart%20Motion%20Example/src/main/java/frc/robot/Robot.java
-    public static final double DRIVE_KP_PROFILED = 0.01;
+    public static final double DRIVE_KP_PROFILED = 0.1;
     public static final double DRIVE_KI_PROFILED = 0.0;
     public static final double DRIVE_KD_PROFILED = 0.0;
-    public static final double DRIVE_KF_PROFILED = 0.23;
-    public static final double DRIVE_MAX_VEL_PROFILED = kMaximumSparkMaxRPM;  // Maximum Velocity, RPM
-    public static final double DRIVE_MAX_ACC_PROFILED = 20000;  // Maximum Acceleration, RPM^2
-    public static final double DRIVE_MAX_ERR_PROFILED = 0.02;  // Error tolerance of PID controller, rotations
+    public static final double DRIVE_KF_PROFILED = 0.2;
+    public static final double DRIVE_MAX_VEL_PROFILED = 1000;  // Maximum Velocity, RPM
+    public static final double DRIVE_MAX_ACC_PROFILED = 1000;  // Maximum Acceleration, RPM^2
+    public static final double DRIVE_MAX_ERR_PROFILED = 0.1;  // Error tolerance of PID controller, rotations
 
     /** Drive motor PID values. */
     public static final double DRIVE_KP = 0.25;
@@ -219,10 +219,10 @@ public final class Constants {
     public static final boolean ANGLE_MOTOR_PROFILED_MODE = false;
     /** Angle motor PID values for speed/acceleration limited mode. */
     // Reference: https://github.com/REVrobotics/SPARK-MAX-Examples/blob/master/Java/Smart%20Motion%20Example/src/main/java/frc/robot/Robot.java
-    public static final double ANGLE_KP_PROFILED = 0.00075;
+    public static final double ANGLE_KP_PROFILED = 1.5;
     public static final double ANGLE_KI_PROFILED = 0.0;
     public static final double ANGLE_KD_PROFILED = 0.0;
-    public static final double ANGLE_KF_PROFILED = 0.0003;
+    public static final double ANGLE_KF_PROFILED = 0.0;
     public static final double ANGLE_MAX_VEL_PROFILED = kMaximumSparkMaxRPM;  // Maximum Velocity, RPM
     public static final double ANGLE_MAX_ACC_PROFILED = 20000;  // Maximum Acceleration, RPM^2
     public static final double ANGLE_MAX_ERR_PROFILED = 0.02;  // Error tolerance of PID controller, rotations
@@ -236,7 +236,7 @@ public final class Constants {
     
     /** Swerve constraints. */
     public static final double MAX_SPEED_IN_PERCENT = 100.0;
-    public static final double MAX_VELOCITY_METERS_PER_SECOND = 0.1 * MAX_SPEED_IN_PERCENT;
+    public static final double MAX_VELOCITY_METERS_PER_SECOND = 0.0442 * MAX_SPEED_IN_PERCENT;
     public static final double MAX_ANGULAR_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND * 4/3;
     public static final double MAX_ANGULAR_DEGREES_PER_SECOND = Math.toDegrees(MAX_ANGULAR_RADIANS_PER_SECOND);
 

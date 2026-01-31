@@ -132,7 +132,7 @@ public class RobotContainer {
                       -m_driver.getLeftY()  * SwerveConstants.kMaxSpeedTeleop,
                       -m_driver.getLeftX()  * SwerveConstants.kMaxSpeedTeleop,
                       m_driver.getRightX() * ConstantsOffboard.MAX_ANGULAR_RADIANS_PER_SECOND,
-                      false),
+                      true),
               m_robotDrive));
     // m_autoChooser = AutoBuilder.buildAutoChooser();  // Default auto will be 'Commands.none()'
 
@@ -148,15 +148,15 @@ public class RobotContainer {
   
   private void configureButtonBindings() {
     m_driver.back().onTrue(Commands.runOnce (() -> m_robotDrive.zeroGyro()));
-    m_driver.rightStick()
-    .toggleOnTrue(Commands.runOnce(() -> m_robotDrive.isAutoRotate = m_robotDrive.isAutoRotate == RotationEnum.STRAFEONTARGET ? RotationEnum.NONE : RotationEnum.STRAFEONTARGET));
+    // m_driver.rightStick()
+    // .toggleOnTrue(Commands.runOnce(() -> m_robotDrive.isAutoRotate = m_robotDrive.isAutoRotate == RotationEnum.STRAFEONTARGET ? RotationEnum.NONE : RotationEnum.STRAFEONTARGET));
 
     m_driver.b()
     .whileTrue(Commands.runOnce(() -> m_robotDrive.isAutoYSpeed = false).alongWith(Commands.runOnce(() -> m_robotDrive.isAutoXSpeed = false).alongWith(Commands.runOnce(() -> m_robotDrive.isAutoRotate = RotationEnum.NONE))));
 
     // Debug
-    m_driver.x().whileTrue(Commands.runOnce (() -> m_robotDrive.setDebugState(5.0, 0.0)));
-    m_driver.y().whileTrue(Commands.runOnce (() -> m_robotDrive.setDebugState(10.0, 90.0)));
+    m_driver.x().whileTrue(Commands.run (() -> m_robotDrive.setDebugState(0.5, 0.0)));
+    m_driver.y().whileTrue(Commands.run (() -> m_robotDrive.setDebugState(1.0, 90.0)));
 
     // While the left bumper on operator controller is held, intake Fuel
     m_driver.leftBumper().whileTrue(new Intake(fuelSubsystem));
@@ -166,8 +166,8 @@ public class RobotContainer {
     // While the A button is held on the operator controller, eject fuel back out
     // the intake
     // m_driver.a().whileTrue(new Eject(fuelSubsystem));
-    m_driver.a().whileTrue(Commands.run (() -> fuelSubsystem.setIntake(5)));
-    m_driver.b().whileTrue(Commands.run (() -> fuelSubsystem.setIntake(1)));
+    m_driver.a().whileTrue(Commands.run (() -> fuelSubsystem.setIntake(-m_driver.getLeftY()  * SwerveConstants.kMaxSpeedTeleop)));
+    m_driver.b().whileTrue(Commands.run (() -> m_robotDrive.resetEncoders()));
 
     fuelSubsystem.setDefaultCommand(fuelSubsystem.run(() -> fuelSubsystem.stop()));
 

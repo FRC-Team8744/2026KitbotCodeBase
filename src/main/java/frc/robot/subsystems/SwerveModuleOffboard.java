@@ -15,6 +15,9 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
+
+import static edu.wpi.first.units.Units.Degrees;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 
@@ -93,19 +96,19 @@ public class SwerveModuleOffboard {
         .positionConversionFactor(ConstantsOffboard.DRIVE_ROTATIONS_TO_METERS)
         .velocityConversionFactor(ConstantsOffboard.DRIVE_RPM_TO_METERS_PER_SECOND);
     driveConfig.closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        // .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         // Set PID values for velocity control in slot 3
-        .p(0.01, ClosedLoopSlot.kSlot3)
-        .i(0, ClosedLoopSlot.kSlot3)
-        .d(0, ClosedLoopSlot.kSlot3)
-        .outputRange(-1, 1, ClosedLoopSlot.kSlot3);
+        .p(ConstantsOffboard.DRIVE_KP_PROFILED) //, ClosedLoopSlot.kSlot3)
+        .i(ConstantsOffboard.DRIVE_KI_PROFILED) //, ClosedLoopSlot.kSlot3)
+        .d(ConstantsOffboard.DRIVE_KD_PROFILED); //, ClosedLoopSlot.kSlot3);
+        // .outputRange(-1, 1, ClosedLoopSlot.kSlot3);
         // .feedForward
           // kV is now in Volts, so we multiply by the nominal voltage (12V)
           // .kV(12.0 / 5767, ClosedLoopSlot.kSlot3);
     driveConfig.closedLoop.maxMotion
-        .maxAcceleration(150, ClosedLoopSlot.kSlot3)
-        .cruiseVelocity(6000, ClosedLoopSlot.kSlot3)
-        .allowedProfileError(1, ClosedLoopSlot.kSlot3);
+        .maxAcceleration(ConstantsOffboard.DRIVE_MAX_ACC_PROFILED) //, ClosedLoopSlot.kSlot3)  // Note: in m/s^2
+        .cruiseVelocity(ConstantsOffboard.DRIVE_MAX_VEL_PROFILED) //, ClosedLoopSlot.kSlot3)  // Note: in m/s
+        .allowedProfileError(ConstantsOffboard.ANGLE_MAX_ERR_PROFILED); //, ClosedLoopSlot.kSlot3);
 
     m_driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     m_driveEncoder.setPosition(0);
@@ -116,24 +119,24 @@ public class SwerveModuleOffboard {
         .idleMode(IdleMode.kBrake);
     turningConfig.encoder
         .positionConversionFactor(ConstantsOffboard.ANGLE_ROTATIONS_TO_RADIANS)
-        .velocityConversionFactor(1);
+        .velocityConversionFactor(ConstantsOffboard.ANGLE_RPM_TO_RADIANS_PER_SECOND);
     turningConfig.closedLoop
         .positionWrappingEnabled(true)
         .positionWrappingMaxInput(2 * Math.PI)
         .positionWrappingMinInput(0)
         // Set PID values for position control in slot 2
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .p(0.01, ClosedLoopSlot.kSlot2)
-        .i(0, ClosedLoopSlot.kSlot2)
-        .d(0, ClosedLoopSlot.kSlot2)
-        .outputRange(-1, 1, ClosedLoopSlot.kSlot2);
+        .p(ConstantsOffboard.ANGLE_KP_PROFILED) //, ClosedLoopSlot.kSlot2)
+        .i(ConstantsOffboard.ANGLE_KI_PROFILED) //, ClosedLoopSlot.kSlot2)
+        .d(ConstantsOffboard.ANGLE_KD_PROFILED); //, ClosedLoopSlot.kSlot2);
+        // .outputRange(-1, 1, ClosedLoopSlot.kSlot2);
         // .feedForward
         //   // kV is now in Volts, so we multiply by the nominal voltage (12V)
         //   .kV(12.0 / 5767, ClosedLoopSlot.kSlot1);
     turningConfig.closedLoop.maxMotion
-        .cruiseVelocity(50000, ClosedLoopSlot.kSlot2)
-        .maxAcceleration(100000, ClosedLoopSlot.kSlot2)
-        .allowedProfileError(10, ClosedLoopSlot.kSlot2);
+        .cruiseVelocity(50000) //, ClosedLoopSlot.kSlot2)
+        .maxAcceleration(100000) //, ClosedLoopSlot.kSlot2)
+        .allowedProfileError(10); //, ClosedLoopSlot.kSlot2);
 
     m_turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
@@ -168,8 +171,8 @@ public class SwerveModuleOffboard {
     state.speedMetersPerSecond *= state.angle.minus(Rotation2d.fromRotations(m_turningEncoder.getPosition())).getCos();
 
     // Set the PID reference states
-    m_drivePID.setSetpoint(state.speedMetersPerSecond, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot3);
-    m_turningPID.setSetpoint(state.angle.getRadians(), ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot2);
+    m_drivePID.setSetpoint(state.speedMetersPerSecond, ControlType.kMAXMotionVelocityControl); //, ClosedLoopSlot.kSlot3);
+    m_turningPID.setSetpoint(state.angle.getRadians(), ControlType.kPosition); //, ClosedLoopSlot.kSlot2);
   }
 
   public SwerveModuleState getState() {
@@ -182,10 +185,10 @@ public class SwerveModuleOffboard {
    * Returns the CANcoder's measured turn angle in degrees.
    */
   public double getAbsAngleDegrees() {
-    var posVal = m_canCoder.getPosition();
+    var posVal = m_canCoder.getAbsolutePosition();
     if(posVal.getStatus().isOK()) {
-        double val = posVal.getValueAsDouble();
-        return val * 360.0;
+        double val = posVal.getValue().in(Degrees); //.getValueAsDouble();
+        return val;
     } else {
         /* Report error and retry later */
         System.out.println("Error reading CANcoder position! Robot will not drive straight!");
@@ -199,7 +202,9 @@ public class SwerveModuleOffboard {
   public double getAngle() {
     return Units.radiansToDegrees(m_turningEncoder.getPosition());
   }
-
+ public void resetEncoder() {
+     m_driveEncoder.setPosition(0);
+  }
   /**
    * Returns the SparkMax internal encoder's measured position in meters.
    */
@@ -242,7 +247,7 @@ public class SwerveModuleOffboard {
     var toApply = new CANcoderConfiguration();
     toApply.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
     toApply.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-    toApply.MagnetSensor.MagnetOffset = m_canCoderOffsetDegrees;
+    // toApply.MagnetSensor.MagnetOffset = m_canCoderOffsetDegrees;
     m_canCoder.getConfigurator().apply(toApply);
 
     /* Speed up signals to an appropriate rate */
@@ -255,9 +260,9 @@ public class SwerveModuleOffboard {
     var posVal = m_canCoder.getAbsolutePosition().waitForUpdate(0.1); // This actaully waits that long! Don't call after init!
     if(posVal.getStatus().isOK()) {
         /* Perform seeding */
-        double val = posVal.getValueAsDouble();
-        // m_turningEncoder.setPosition(Units.degreesToRadians(val * 360.0 - m_canCoderOffsetDegrees));
-        m_turningEncoder.setPosition(Units.degreesToRadians(val * 360.0));
+        double val = posVal.getValue().in(Degrees);
+        m_turningEncoder.setPosition(Units.degreesToRadians(val - m_canCoderOffsetDegrees));
+        // m_turningEncoder.setPosition(Units.degreesToRadians(val));
     } else {
         /* Report error and retry later */
         System.out.println("Error reading CANcoder position! Robot will not drive straight!");

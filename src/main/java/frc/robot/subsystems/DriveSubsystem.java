@@ -62,8 +62,8 @@ public class DriveSubsystem extends SubsystemBase {
   double offset_FR = 0;
   double offset_RR = 0;
   
-  private double m_DriverSpeedScale = 1.0;
-  private double m_AutoSpeedScale = 1.0;
+  // private double m_DriverSpeedScale = 1.0;
+  // private double m_AutoSpeedScale = 1.0;
 
   public DriveModifier[] driveModifiers;
 
@@ -246,10 +246,10 @@ public class DriveSubsystem extends SubsystemBase {
     //   }
     // }
 
-    m_poseEstimator.update(Rotation2d.fromDegrees(m_imu.getYaw()), getModulePositions());
+    // m_poseEstimator.update(Rotation2d.fromDegrees(m_imu.getYaw()), getModulePositions());
 
     // Look into
-    if (AutoCommandManager.isSim = false) {m_field.setRobotPose(m_poseEstimator.getEstimatedPosition());}
+    // if (AutoCommandManager.isSim = false) {m_field.setRobotPose(m_poseEstimator.getEstimatedPosition());}
 
     m_odometry.update(
         Rotation2d.fromDegrees(m_imu.getYaw()),
@@ -261,7 +261,7 @@ public class DriveSubsystem extends SubsystemBase {
         });
     
     // Update robot position on Field2d.
-    m_field.setRobotPose(getEstimatedPose());
+    m_field.setRobotPose(getPose()); //getEstimatedPose());
 
     // SmartDashboard.putNumber("Gyro angle", m_imu.getYaw().getValueAsDouble());
     // SmartDashboard.putNumber("Gyro pitch", m_imu.getPitch().getValueAsDouble());
@@ -328,26 +328,26 @@ public class DriveSubsystem extends SubsystemBase {
   //     SmartDashboard.putNumber("RL Drive encoder", m_rearLeft.getPosition().distanceMeters);
   //   }
 
-    Vector<Double> robotVector = new Vector<>();
-    if (Math.abs(xVelocity) <= 0.1) {
-      robotVector.add(xVelocity);
-    }
-    else {
-      robotVector.add(0.0);
-    }
-    if (Math.abs(yVelocity) <= 0.1) {
-      robotVector.add(yVelocity);
-    }
-    else {
-      robotVector.add(0.0);
-    }
+    // Vector<Double> robotVector = new Vector<>();
+    // if (Math.abs(xVelocity) <= 0.1) {
+    //   robotVector.add(xVelocity);
+    // }
+    // else {
+    //   robotVector.add(0.0);
+    // }
+    // if (Math.abs(yVelocity) <= 0.1) {
+    //   robotVector.add(yVelocity);
+    // }
+    // else {
+    //   robotVector.add(0.0);
+    // }
 
     // Arrays.stream(driveModifiers).forEach(((driveModifier) -> driveModifier.execute(this)));
 
-    SmartDashboard.putBoolean("Is Right", !leftPoint);
+    // SmartDashboard.putBoolean("Is Right", !leftPoint);
     
-    getRobotVelocityX();
-    getRobotVelocityY();
+    // getRobotVelocityX();
+    // getRobotVelocityY();
 
     // SmartDashboard.putNumber("Estimated rotation", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
     // SmartDashboard.putNumber("X Speed", autoXSpeed);
@@ -396,20 +396,20 @@ public class DriveSubsystem extends SubsystemBase {
    * @param fieldRelative Whether the provided x and y speeds are relative to the field.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    rot = isAutoRotate != RotationEnum.NONE ? autoRotateSpeed : rot;
+    // rot = isAutoRotate != RotationEnum.NONE ? autoRotateSpeed : rot;
 
-    if (isDrivingSlow) {
-      ySpeed *= 0.1;
-      xSpeed *= 0.1;
-    }
+    // if (isDrivingSlow) {
+    //   ySpeed *= 0.1;
+    //   xSpeed *= 0.1;
+    // }
 
-    if (isAutoYSpeed && isAutoRotate == RotationEnum.STRAFEONTARGET) {
-      ySpeed = autoYSpeed;
-    }
+    // if (isAutoYSpeed && isAutoRotate == RotationEnum.STRAFEONTARGET) {
+    //   ySpeed = autoYSpeed;
+    // }
 
-    if (isAutoXSpeed && isAutoRotate == RotationEnum.STRAFEONTARGET) {
-      xSpeed = autoXSpeed;
-    }
+    // if (isAutoXSpeed && isAutoRotate == RotationEnum.STRAFEONTARGET) {
+    //   xSpeed = autoXSpeed;
+    // }
 
     // if (Arrays.stream(driveModifiers).anyMatch(((driveModifier) -> driveModifier.actingOnRot && driveModifier.shouldRun(this)))) {
     //   rot = Constants.autoRotateSpeed;
@@ -423,28 +423,38 @@ public class DriveSubsystem extends SubsystemBase {
     //   xSpeed = Constants.autoXSpeed;
     // }
 
-    SmartDashboard.putBoolean("Is Driving Slow", isDrivingSlow);
+    // SmartDashboard.putBoolean("Is Driving Slow", isDrivingSlow);
     // SmartDashboard.putNumber("FL Desired Position", m_frontLeft.getDesiredPosition());
 
+    //Square inputs
+    // xSpeed=Math.signum(xSpeed)* xSpeed*xSpeed;
+    // ySpeed=Math.signum(ySpeed)* ySpeed*ySpeed;
+    // rot=Math.signum(rot)* rot*rot;
+
     // Apply joystick deadband
-    xSpeed = isAutoXSpeed ? xSpeed : MathUtil.applyDeadband(xSpeed, OIConstants.kDeadband, 1.0);
-    ySpeed = isAutoYSpeed ? ySpeed : MathUtil.applyDeadband(ySpeed, OIConstants.kDeadband, 1.0);
-    rot = isAutoRotate != RotationEnum.NONE ? rot : MathUtil.applyDeadband(rot, OIConstants.kRotationDeadband, 1.0);
+    xSpeed = MathUtil.applyDeadband(xSpeed, OIConstants.kDeadband, 1.0);
+    ySpeed = MathUtil.applyDeadband(ySpeed, OIConstants.kDeadband, 1.0);
+    rot = MathUtil.applyDeadband(rot, OIConstants.kDeadband, 1.0);
+
+    // Apply joystick deadband
+    // xSpeed = isAutoXSpeed ? xSpeed : MathUtil.applyDeadband(xSpeed, OIConstants.kDeadband, 1.0);
+    // ySpeed = isAutoYSpeed ? ySpeed : MathUtil.applyDeadband(ySpeed, OIConstants.kDeadband, 1.0);
+    // rot = isAutoRotate != RotationEnum.NONE ? rot : MathUtil.applyDeadband(rot, OIConstants.kRotationDeadband, 1.0);
 
     // xSpeed *= Constants.SwerveConstants.kMaxSpeedTeleop;
     // ySpeed *= Constants.SwerveConstants.kMaxSpeedTeleop;
     // rot *= Constants.ConstantsOffboard.MAX_ANGULAR_RADIANS_PER_SECOND;
 
     // Apply speed scaling
-    xSpeed = xSpeed * m_DriverSpeedScale;
-    ySpeed = ySpeed * m_DriverSpeedScale;
-    rot = rot * m_DriverSpeedScale;
+    // xSpeed = xSpeed * m_DriverSpeedScale;
+    // ySpeed = ySpeed * m_DriverSpeedScale;
+    // rot = rot * m_DriverSpeedScale;
     
-    if (isAutoRotate == RotationEnum.STRAFEONTARGET) {
-      fieldRelative = false;
-      ySpeed = -ySpeed;
-      xSpeed = -xSpeed;
-    }
+    // if (isAutoRotate == RotationEnum.STRAFEONTARGET) {
+    //   fieldRelative = false;
+    //   ySpeed = -ySpeed;
+    //   xSpeed = -xSpeed;
+    // }
 
     /*if (isAutoRotate == false && Math.abs(rot / ConstantsOffboard.MAX_ANGULAR_RADIANS_PER_SECOND) <= 0.1 
     && rotationTimer.hasElapsed(0.1)
@@ -482,7 +492,7 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearLeft.setDesiredState(swerveModuleStates[SwerveConstants.kSwerveRL_enum]);
     m_rearRight.setDesiredState(swerveModuleStates[SwerveConstants.kSwerveRR_enum]);
 
-    SmartDashboard.putNumber("FL desired Angle", swerveModuleStates[SwerveConstants.kSwerveFL_enum].angle.getDegrees());
+    // SmartDashboard.putNumber("FL desired Angle", swerveModuleStates[SwerveConstants.kSwerveFL_enum].angle.getDegrees());
   }
 
   /**
@@ -531,9 +541,9 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     // Apply speed scaling
-    speeds.vxMetersPerSecond = speeds.vxMetersPerSecond * m_AutoSpeedScale;
-    speeds.vyMetersPerSecond = speeds.vyMetersPerSecond * m_AutoSpeedScale;
-    speeds.omegaRadiansPerSecond = -speeds.omegaRadiansPerSecond * m_AutoSpeedScale;
+    // speeds.vxMetersPerSecond = speeds.vxMetersPerSecond * m_AutoSpeedScale;
+    // speeds.vyMetersPerSecond = speeds.vyMetersPerSecond * m_AutoSpeedScale;
+    // speeds.omegaRadiansPerSecond = -speeds.omegaRadiansPerSecond * m_AutoSpeedScale;
     
     // SmartDashboard.putNumber("Robot Auto X After align", speeds.vxMetersPerSecond);
 
@@ -551,25 +561,25 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
-  // public void resetEncoders() {
-  //   m_frontLeft.resetEncoder();
-  //   m_rearLeft.resetEncoder();
-  //   m_frontRight.resetEncoder();
-  //   m_rearRight.resetEncoder();
-  // }
+  public void resetEncoders() {
+    m_frontLeft.resetEncoder();
+    m_rearLeft.resetEncoder();
+    m_frontRight.resetEncoder();
+    m_rearRight.resetEncoder();
+  }
 
   /* Sets how fast the human driver can drive */
-  public void setMaxOutput(double val) {
-    m_DriverSpeedScale = val;
-  }
+  // public void setMaxOutput(double val) {
+  //   m_DriverSpeedScale = val;
+  // }
 
-  public void toggleMaxOutput() {
-    if (m_DriverSpeedScale == 1.0){
-      m_DriverSpeedScale = Constants.kDriverSpeedLimit;
-    } else {
-      m_DriverSpeedScale = 1.0;
-    }
-  }
+  // public void toggleMaxOutput() {
+  //   if (m_DriverSpeedScale == 1.0){
+  //     m_DriverSpeedScale = Constants.kDriverSpeedLimit;
+  //   } else {
+  //     m_DriverSpeedScale = 1.0;
+  //   }
+  // }
 
   public Pose2d getEstimatedPose() {
     return m_poseEstimator.getEstimatedPosition();
