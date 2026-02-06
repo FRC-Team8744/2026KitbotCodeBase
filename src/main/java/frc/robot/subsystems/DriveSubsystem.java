@@ -42,6 +42,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.AutoCommandManager;
@@ -231,6 +233,27 @@ public class DriveSubsystem extends SubsystemBase {
     m_timerX.start();
     m_timerY.start();
     rotationTimer.start();
+
+    // SmartDashboard.putData("Swerve Drive", new Sendable() {
+    //   @Override
+    //   public void initSendable(SendableBuilder builder) {
+    //     builder.setSmartDashboardType("SwerveDrive");
+
+    //     builder.addDoubleProperty("Front Left Angle", () -> m_frontLeft.state.angle.getRadians(), null);
+    //     builder.addDoubleProperty("Front Left Velocity", () -> m_frontLeft.state.speedMetersPerSecond, null);
+
+    //     builder.addDoubleProperty("Front Right Angle", () -> m_frontRight.state.angle.getRadians(), null);
+    //     builder.addDoubleProperty("Front Right Velocity", () -> m_frontRight.state.speedMetersPerSecond, null);
+
+    //     builder.addDoubleProperty("Back Left Angle", () -> m_rearLeft.state.angle.getRadians(), null);
+    //     builder.addDoubleProperty("Back Left Velocity", () -> m_rearLeft.state.speedMetersPerSecond, null);
+
+    //     builder.addDoubleProperty("Back Right Angle", () -> m_rearRight.state.angle.getRadians(), null);
+    //     builder.addDoubleProperty("Back Right Velocity", () -> m_rearRight.state.speedMetersPerSecond, null);
+
+    //     builder.addDoubleProperty("Robot Angle", () -> m_odometry.getPoseMeters().getRotation().getRadians(), null);
+    //   }
+    // });
   }
 
   @Override
