@@ -63,11 +63,11 @@ public class SwerveModuleOffboard {
   SwerveModuleState state;
   private int DisplayCount = 0;
 
-  /**
+  /** 
    * SwerveModuleOffboard - A SparkMax-based swerve module with canCoder wheel angle measurement
    *
    * @param driveMotorID The CAN ID of the drive motor.
-   * @param turningMotorID The CAN ID of the turning motor.
+   * @param turningMotorID The CAN ID of the turning motor. 
    * @param magEncoderID The CAN ID of the magnetic encoder.
    * @param magEncoderOffsetDegrees The absolute offset of the magnetic encoder.
    */
